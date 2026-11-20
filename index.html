@@ -237,6 +237,20 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .mode-card .md { font-size: 12.5px; color: var(--muted); }
 .mode-card .mtag { font-size: 11px; padding: 1px 7px; border-radius: 6px; background: rgba(255, 255, 255, .06); color: var(--dim); font-weight: 600; }
 .start-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.seg {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: #0b1116; border: 1px solid var(--line); border-radius: 12px;
+  padding: 3px 4px 3px 11px;
+}
+.seg-label { font-size: 12.5px; color: var(--dim); margin-right: 5px; }
+.seg-btn {
+  border: 0; background: transparent; color: var(--muted); font-size: 13.5px; font-weight: 700;
+  padding: 6px 12px; border-radius: 9px; transition: background .15s, color .15s;
+  font-variant-numeric: tabular-nums;
+}
+.seg-btn:hover { background: rgba(255, 255, 255, .07); color: var(--text); }
+.seg-btn.on { background: var(--accent); color: var(--accent-ink); }
+.seg-btn.on:hover { background: var(--accent); color: var(--accent-ink); }
 
 /* ----- practice run ----- */
 .run-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
@@ -251,6 +265,18 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .word-lg { font-family: var(--serif); font-size: clamp(38px, 8vw, 62px); font-weight: 700; line-height: 1.1; letter-spacing: .01em; word-break: break-word; }
 .word-lg.sm { font-size: clamp(28px, 5vw, 40px); }
 .phon-line { display: flex; align-items: center; gap: 12px; margin-top: 6px; color: var(--dim); font-family: var(--mono); font-size: 14px; }
+.q-note { margin-top: 9px; font-size: 13px; line-height: 1.55; color: #9fb0c0; max-width: 760px; }
+.q-count { margin-top: 9px; }
+.vline { font-size: 14px; font-weight: 700; letter-spacing: .01em; white-space: nowrap; }
+.vline.good { color: var(--good); }
+.vline.bad { color: var(--bad); }
+.answer-extra {
+  margin-top: 14px; padding: 12px 15px; border-radius: 12px;
+  border: 1px solid var(--line-soft); background: rgba(255, 255, 255, .02);
+  font-size: 13px; line-height: 1.65; color: #9fb0c0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.answer-extra b { color: var(--text); font-family: var(--serif); font-size: 15px; }
 .speak {
   border: 1px solid var(--line); background: var(--panel-2); border-radius: 9px;
   width: 32px; height: 32px; display: grid; place-items: center; font-size: 14px; color: var(--muted);
@@ -1789,10 +1815,9 @@ compromise
       '<div class="mode-grid">' + modeCards + '</div>' +
       '<div class="panel">' +
       '<div class="start-bar">' +
-      '<label class="check">本轮数量 ' +
-      '<select id="limit-sel" style="width:auto">' +
-      [10, 20, 30, 50].map((n) => '<option value="' + n + '"' + (n === P.limit ? ' selected' : '') + '>' + n + '</option>').join('') +
-      '</select></label>' +
+      '<div class="seg" id="limit-seg"><span class="seg-label">本轮</span>' +
+      [10, 20, 30, 50].map((n) => '<button class="seg-btn' + (n === P.limit ? ' on' : '') + '" data-n="' + n + '">' + n + '</button>').join('') +
+      '</div>' +
       '<label class="check"><input type="checkbox" id="auto-speak"' + (state.settings.autoSpeak ? ' checked' : '') + '> 自动发音</label>' +
       '<span class="spacer"></span>' +
       '<button class="btn primary lg" id="btn-start">开始 · ' + (MODES.find((m) => m.id === mode) || MODES[0]).name + '</button>' +
@@ -1826,6 +1851,14 @@ compromise
     body.onclick = (e) => {
       const go = e.target.closest('[data-go]');
       if (go) { switchTab(go.dataset.go); return; }
+      const sb = e.target.closest('.seg-btn');
+      if (sb) {
+        P.limit = +sb.dataset.n;
+        state.settings.limit = P.limit;
+        saveState();
+        $$('.seg-btn').forEach((b) => b.classList.toggle('on', b === sb));
+        return;
+      }
       const mc = e.target.closest('.mode-card');
       if (mc && mc.dataset.mode) {
         P.mode = mc.dataset.mode;
@@ -1841,7 +1874,6 @@ compromise
       if (e.target.closest('#btn-retry-wrong')) { retryWrong(); return; }
     };
     body.onchange = (e) => {
-      if (e.target.id === 'limit-sel') { P.limit = +e.target.value; state.settings.limit = P.limit; saveState(); }
       if (e.target.id === 'auto-speak') { state.settings.autoSpeak = e.target.checked; saveState(); }
     };
   }
@@ -1952,14 +1984,14 @@ compromise
     if (isSyn) {
       head = '<div class="q-kind">中 → 英 · 选出所有意思对得上的词</div>' +
         '<div class="cn-prompt">' + (q.pos ? '<span class="pos">' + esc(q.pos) + '</span>' : '') + esc(q.cn) + '</div>' +
-        '<div class="sub" style="margin-top:8px">共 <b style="color:var(--accent)">' + q.correctCount + '</b> 个词能表达这个意思</div>';
+        '<div class="sub q-count">共 <b style="color:var(--accent)">' + q.correctCount + '</b> 个词能表达这个意思</div>';
     } else {
       head = '<div class="q-kind">英 → 中 · 选出这个词的全部意思</div>' +
         '<div class="word-lg sm">' + esc(q.answer) + '</div>' +
         '<div class="phon-line">' +
         '<span>' + esc(q.item.card.phonetic ? '/' + q.item.card.phonetic.replace(/^\/|\/$/g, '') + '/' : '') + '</span>' +
         '<button class="speak" data-say="' + esc(q.answer) + '">🔊</button></div>' +
-        '<div class="sub" style="margin-top:8px">共 <b style="color:var(--accent)">' + q.correctCount + '</b> 个意思</div>';
+        '<div class="sub q-count">共 <b style="color:var(--accent)">' + q.correctCount + '</b> 个意思</div>';
     }
     return head +
       '<div class="options' + (isSyn ? ' en' : '') + '" id="opts">' +
@@ -2018,22 +2050,21 @@ compromise
       });
     }
     const isSyn = q.kind === 'synonym';
-    const card = q.item.card;
-    const answers = q.opts.filter((o) => o.ok).map((o) => '<b>' + esc(o.text) + '</b>').join('、');
-    const fb = document.createElement('div');
-    fb.className = 'fb ' + (ok ? 'good' : 'bad');
-    fb.innerHTML = '<div class="fb-title">' + (ok ? '✓ 全对' : (isSyn ? '✗ 没选全 / 选多了' : '✗ 漏了意思 / 选多了')) +
-      (ok && P.streak > 1 ? '<span class="badge accent" style="font-size:11px">连击 ×' + P.streak + '</span>' : '') + '</div>' +
-      (isSyn
-        ? '<div class="also">表示「' + esc(q.cn) + '」的 ' + q.correctCount + ' 个词：' + answers + '</div>'
-        : '<div class="also">「' + esc(q.answer) + '」一共有 ' + q.correctCount + ' 个意思：' + answers + '</div>') +
-      (isSyn && card.senses.length
-        ? '<div class="also" style="color:#9fb0c0">' + esc(card.en) + '：' + card.senses.map((s) => (s.pos ? s.pos + ' ' : '') + esc(s.cn)).join('；') + '</div>'
-        : '') +
-      (card.note ? '<div class="also" style="color:#9fb0c0">📎 ' + esc(card.note) + '</div>' : '');
-    const actions = $('#actions');
-    const stage = $('#stage');
-    if (actions) stage.insertBefore(fb, actions); else stage.appendChild(fb);
+    let missed = 0;
+    let extra = 0;
+    q.opts.forEach((o, i) => {
+      if (o.ok && !picked.has(i)) missed += 1;
+      if (!o.ok && picked.has(i)) extra += 1;
+    });
+
+    // 结果就地显示在原来的「已选 N 项」位置，页面高度不变
+    const sc = $('#sel-count');
+    if (sc) {
+      sc.className = 'vline ' + (ok ? 'good' : 'bad');
+      sc.textContent = ok
+        ? '✓ 全对' + (P.streak > 1 ? ' · 连击 ×' + P.streak : '')
+        : '✗ ' + [missed ? '漏 ' + missed : '', extra ? '多选 ' + extra : ''].filter(Boolean).join(' · ');
+    }
 
     // 提交按钮直接变成「下一个」
     const btn = $('#btn-check');
@@ -2042,8 +2073,17 @@ compromise
       btn.innerHTML = '下一个 <span class="kb">Enter</span>';
       btn.onclick = () => advance();
     }
-    const sc = $('#sel-count');
-    if (sc) sc.textContent = '';
+    // 笔记放在按钮「下面」，不占按钮位置，也不会把它挤走
+    const card = q.item.card;
+    const extras = [];
+    if (card.note) extras.push('📎 ' + esc(card.note));
+    const actions = $('#actions');
+    if (extras.length && actions) {
+      const box = document.createElement('div');
+      box.className = 'answer-extra';
+      box.innerHTML = extras.map((x) => '<div>' + x + '</div>').join('');
+      actions.insertAdjacentElement('afterend', box);
+    }
     P.nextReadyAt = now() + 260;
     if (!isSyn) speak(q.answer);
   }
