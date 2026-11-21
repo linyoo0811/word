@@ -52,7 +52,12 @@ body {
     radial-gradient(800px 480px at 92% 0%, rgba(184, 240, 142, .08), transparent 60%),
     radial-gradient(700px 600px at 50% 120%, rgba(255, 209, 102, .05), transparent 60%);
   background-attachment: fixed;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
+input, textarea { -webkit-user-select: text; user-select: text; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -.01em; }
@@ -223,7 +228,7 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .stat .s2 { display: block; font-size: 11px; color: #4f5c69; margin-top: 2px; }
 .stat.hi b { color: var(--accent); }
 .stat.warn b { color: var(--warn); }
-.mode-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.mode-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(285px, 1fr)); gap: 12px; margin-bottom: 16px; }
 .mode-card {
   text-align: left; border: 1px solid var(--line-soft); border-radius: 16px;
   background: linear-gradient(180deg, var(--panel), var(--bg-soft)); padding: 16px;
@@ -251,6 +256,10 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .seg-btn:hover { background: rgba(255, 255, 255, .07); color: var(--text); }
 .seg-btn.on { background: var(--accent); color: var(--accent-ink); }
 .seg-btn.on:hover { background: var(--accent); color: var(--accent-ink); }
+.seg.sm { padding: 3px 4px 3px 10px; }
+.seg.sm .seg-btn { padding: 5px 10px; font-size: 12.5px; border-radius: 8px; }
+.seg.sm .seg-label { font-size: 12px; }
+.lib-filters { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 
 /* ----- practice run ----- */
 .run-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
@@ -270,6 +279,37 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .vline { font-size: 14px; font-weight: 700; letter-spacing: .01em; white-space: nowrap; }
 .vline.good { color: var(--good); }
 .vline.bad { color: var(--bad); }
+.vline.warn { color: var(--warn); }
+
+/* 数量挑战 */
+.nums { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.num {
+  min-width: 66px; height: 66px; padding: 0 16px;
+  border-radius: 15px; border: 1px solid var(--line); background: rgba(255, 255, 255, .02);
+  color: var(--text); font-size: 27px; font-weight: 800;
+  font-variant-numeric: tabular-nums; transition: .15s;
+}
+.num:hover { border-color: #3a4b5e; background: rgba(255, 255, 255, .05); transform: translateY(-1px); }
+.num.ok { border-color: rgba(126, 231, 135, .6); background: rgba(126, 231, 135, .13); color: var(--good); }
+.num.bad { border-color: rgba(255, 123, 114, .6); background: rgba(255, 123, 114, .13); color: var(--bad); }
+.num.warn { border-color: rgba(255, 209, 102, .6); background: rgba(255, 209, 102, .13); color: var(--warn); }
+
+/* 数量挑战：答完后的答案面板 */
+.count-answer {
+  margin-top: 16px; padding: 18px 20px; border-radius: 16px;
+  border: 1px solid var(--line); background: linear-gradient(180deg, rgba(255, 255, 255, .035), rgba(255, 255, 255, .015));
+}
+.ca-title { font-size: 16px; color: var(--muted); letter-spacing: .01em; }
+.ca-title b { color: var(--accent); font-size: 22px; font-weight: 800; margin: 0 3px; }
+.ca-list { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
+.ca-list .sense-tag { font-size: 15.5px; padding: 7px 13px; border-radius: 10px; }
+.ca-list .sense-tag .pos { font-size: 12.5px; }
+.ca-word {
+  font-family: var(--serif); font-size: 18px; font-weight: 600; letter-spacing: .01em;
+  padding: 5px 12px; border-radius: 10px; background: var(--panel-2);
+  border: 1px solid rgba(184, 240, 142, .28); color: var(--accent);
+}
+.ca-note { margin-top: 14px; font-size: 13.5px; line-height: 1.6; color: #9fb0c0; }
 .answer-extra {
   margin-top: 14px; padding: 12px 15px; border-radius: 12px;
   border: 1px solid var(--line-soft); background: rgba(255, 255, 255, .02);
@@ -319,8 +359,8 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .option.ok .mark { border-color: var(--good); background: var(--good); color: #04140a; }
 .option.bad { border-color: rgba(255, 123, 114, .55); background: rgba(255, 123, 114, .1); }
 .option.bad .mark { border-color: var(--bad); background: var(--bad); color: #1a0503; }
-.option.missed { border-color: rgba(255, 209, 102, .5); background: rgba(255, 209, 102, .08); }
-.option.missed .mark { border-color: var(--warn); background: var(--warn); color: #241a00; }
+.option.missed { border-color: rgba(126, 231, 135, .6); background: rgba(126, 231, 135, .1); }
+.option.missed .mark { border-color: var(--good); background: var(--good); color: #04140a; }
 .options.en .option > span:last-child { font-family: var(--serif); font-size: 19px; font-weight: 600; letter-spacing: .01em; }
 
 /* feedback */
@@ -370,6 +410,11 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .bar-col .d { font-size: 11px; color: var(--dim); }
 .bar-col .n { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .top-wrong { display: flex; flex-direction: column; gap: 7px; }
+.affix-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.affix-row { display: grid; grid-template-columns: 190px 1fr; gap: 14px; align-items: baseline; font-size: 13.5px; }
+.affix-row b { color: var(--accent); font-family: var(--mono); font-size: 13px; font-weight: 700; }
+.affix-row span { color: var(--muted); line-height: 1.6; }
+@media (max-width: 720px) { .affix-row { grid-template-columns: 1fr; gap: 2px; } }
 .tw-row { display: flex; align-items: center; gap: 10px; font-size: 14px; }
 .tw-row .w { font-family: var(--serif); font-size: 16px; flex: 1; }
 .tw-row .n { color: var(--bad); font-size: 12.5px; font-weight: 700; }
@@ -488,26 +533,24 @@ compromise
       <div class="panel">
         <div class="row gap">
           <input type="search" id="lib-search" placeholder="搜单词或中文释义…" style="flex:1;min-width:160px">
-          <select id="lib-filter" style="width:auto">
-            <option value="all">全部</option>
-            <option value="new">从没练过</option>
-            <option value="weak">薄弱</option>
-            <option value="mastered">已掌握</option>
-            <option value="nosure">缺释义</option>
-          </select>
-          <select id="lib-sort" style="width:auto">
-            <option value="added">导入顺序</option>
-            <option value="alpha">A → Z</option>
-            <option value="bad">错得最多</option>
-            <option value="due">快到复习</option>
-          </select>
-        </div>
-        <div class="row gap" style="margin-top:10px">
           <span class="parse-hint" id="lib-count"></span>
-          <span class="spacer"></span>
-          <button class="btn ghost sm" id="btn-export">导出 JSON</button>
-          <button class="btn ghost sm" id="btn-import-json">导入 JSON</button>
-          <input type="file" id="file-json" accept=".json,application/json" hidden>
+        </div>
+        <div class="lib-filters">
+          <div class="seg sm" id="lib-filter-seg">
+            <span class="seg-label">筛选</span>
+            <button class="seg-btn on" data-f="all">全部</button>
+            <button class="seg-btn" data-f="new">没练过</button>
+            <button class="seg-btn" data-f="weak">薄弱</button>
+            <button class="seg-btn" data-f="mastered">已掌握</button>
+            <button class="seg-btn" data-f="nosure">缺释义</button>
+          </div>
+          <div class="seg sm" id="lib-sort-seg">
+            <span class="seg-label">排序</span>
+            <button class="seg-btn on" data-s="added">导入顺序</button>
+            <button class="seg-btn" data-s="alpha">A → Z</button>
+            <button class="seg-btn" data-s="bad">错得多</button>
+            <button class="seg-btn" data-s="due">快复习</button>
+          </div>
         </div>
       </div>
       <div id="lib-list"></div>
@@ -982,15 +1025,20 @@ compromise
     return r;
   }
 
-  /** 同一个中文释义 → 多个英文单词 */
+  /** 释义组 key：同一个中文意思 + 同一个词性 才算同义（defend 和 defense 不会混在一起） */
+  function senseKey(sense) {
+    return normCn((sense && sense.cn) || '') + '|' + posKey(sense);
+  }
+
+  /** 同一个中文释义 + 同一个词性 → 多个英文单词 */
   function buildGroups(cards) {
     const map = new Map();
     (cards || []).forEach((c) => {
       (c.senses || []).forEach((s) => {
-        const k = normCn(s.cn);
-        if (!k) return;
+        if (!normCn(s.cn)) return;
+        const k = senseKey(s);
         let g = map.get(k);
-        if (!g) { g = { key: k, cn: s.cn, members: [] }; map.set(k, g); }
+        if (!g) { g = { key: k, cn: s.cn, pos: (s.pos || ''), members: [] }; map.set(k, g); }
         if (!g.members.some((m) => m.id === c.id)) g.members.push({ id: c.id, en: c.en });
       });
     });
@@ -1118,6 +1166,7 @@ compromise
   function pruneSrs() {
     const alive = new Set();
     collectItems().forEach((it) => alive.add(it.key));
+    FAMILIES.forEach((f) => alive.add('morph::' + f[0]));
     Object.keys(state.srs).forEach((k) => { if (!alive.has(k)) delete state.srs[k]; });
     const ids = new Set(state.cards.map((c) => c.id));
     Object.keys(state.seen).forEach((k) => { if (!ids.has(k)) delete state.seen[k]; });
@@ -1134,7 +1183,61 @@ compromise
   const MODES = [
     { id: 'sense', icon: '🎭', name: '一词多义', desc: '给一个英文词，选出它的全部意思', tag: '英 → 中' },
     { id: 'synonym', icon: '🔗', name: '同义多词', desc: '给一个中文意思，选出所有对应的英文词', tag: '中 → 英' },
-    { id: 'mix', icon: '🎲', name: '混合模式', desc: '两种题随机混着出，一天一轮就够', tag: '推荐' }
+    { id: 'mix', icon: '🎲', name: '混合模式', desc: '两种题随机混着出，一天一轮就够', tag: '推荐' },
+    { id: 'count', icon: '🔢', name: '数量挑战', desc: '不给你选项，只说「有几个」——考全不全', tag: '进阶' },
+    { id: 'morph', icon: '🧬', name: '构词法', desc: '看词根词缀：一个词带出一串，别再当同义背', tag: '进阶' }
+  ];
+
+  /** 构词家族：base → derived，规则说明 */
+  const FAMILIES = [
+    ['defend', 'defense', 'd → se'],
+    ['offend', 'offense', 'd → se'],
+    ['applaud', 'applause', 'd → se'],
+    ['decide', 'decision', 'de → sion'],
+    ['collide', 'collision', 'de → sion'],
+    ['erode', 'erosion', 'de → sion'],
+    ['corrode', 'corrosion', 'de → sion'],
+    ['extend', 'extension', 'd → sion'],
+    ['allege', 'allegation', '加 -ation'],
+    ['advise', 'advice', 'se → ce'],
+    ['suggest', 'suggestion', '加 -ion'],
+    ['propose', 'proposal', '加 -al'],
+    ['attend', 'attendant', '加 -ant（人）'],
+    ['recruit', 'recruiter', '加 -er（人）'],
+    ['appoint', 'appointment', '加 -ment'],
+    ['combine', 'combination', '加 -ation'],
+    ['concentrate', 'concentration', '加 -ion'],
+    ['consolidate', 'consolidation', '加 -ion'],
+    ['oblige', 'obligation', '加 -ation'],
+    ['inherit', 'inheritance', '加 -ance'],
+    ['resign', 'resignation', '加 -ation'],
+    ['depart', 'departure', '加 -ure'],
+    ['marry', 'marriage', 'y → i + -age'],
+    ['pass', 'passage', '加 -age'],
+    ['pack', 'package', '加 -age'],
+    ['store', 'storage', '加 -age'],
+    ['wreck', 'wreckage', '加 -age'],
+    ['short', 'shortage', '加 -age'],
+    ['shrink', 'shrinkage', '加 -age'],
+    ['leak', 'leakage', '加 -age']
+  ];
+
+  /** 词缀速查（统计页展示） */
+  const AFFIXES = [
+    ['d / de → sion', '动词变名词：decide→decision、collide→collision、erode→erosion、extend→extension'],
+    ['d → se', 'defend→defense、offend→offense、applaud→applause'],
+    ['-age', '名词后缀：passage、package、storage、shortage、leakage、marriage'],
+    ['-ant / -er', '表示「人」：attendant、assistant、recruiter'],
+    ['-ion / -ation / -ment', '动词变名词：suggestion、obligation、appointment'],
+    ['bi-', '双：bicycle、bilateral、bimonthly'],
+    ['multi-', '多：multimedia、multilateral'],
+    ['trans-', '转换 / 越过：transfer、transform、transport、transcend、transnational'],
+    ['co- / com- / con-', '共同、一起：cooperate、combine、concentrate'],
+    ['ex-', '向外：expel、exit、exclude'],
+    ['pel-', '推：expel 推出→开除、impel 内推→驱使、propel 前推→推进、repel 推回→排斥'],
+    ['leg-', '法律：legal、illegal、legislation、legislature、legitimate'],
+    ['contra- / counter-', '相反：contrary、contrast、contradict、counteract、counterpart'],
+    ['vis-', '看：vision、visible、visualize、supervise、revise']
   ];
 
   function buildGroupIndex() {
@@ -1151,7 +1254,7 @@ compromise
       const c = state.cards.find((x) => x.id === id);
       if (!c) return;
       c.senses.forEach((s) => {
-        (P.groupIndex.get(normCn(s.cn)) || []).forEach((en) => set.add(uid(en)));
+        (P.groupIndex.get(senseKey(s)) || []).forEach((en) => set.add(uid(en)));
       });
     });
     return set;
@@ -1198,7 +1301,7 @@ compromise
 
   /** 中 → 英：选出所有能表达这个意思的词 */
   function makeSynQ(item) {
-    const key = normCn(item.sense.cn);
+    const key = senseKey(item.sense);
     const names = (P.groupIndex.get(key) || []).slice();
     if (!names.length) names.push(item.card.en);
     const correct = [];
@@ -1228,16 +1331,84 @@ compromise
     };
   }
 
+  /** 进阶：只问数量 */
+  function makeCountQ(item, sub) {
+    const isSense = sub === 'sense';
+    const correct = isSense
+      ? Math.max(1, item.card.senses.length)
+      : Math.max(1, (P.groupIndex.get(senseKey(item.sense)) || []).length);
+    const top = Math.min(10, Math.max(4, correct + 2));
+    const nums = [];
+    for (let n = 1; n <= top; n++) nums.push(n);
+    return {
+      kind: 'count', sub: sub, item: item,
+      cn: item.sense.cn, pos: item.sense.pos || '',
+      answer: item.card.en, correct: correct, nums: nums
+    };
+  }
+
+  /** 构词法：base ⇄ derived */
+  function morphAvailable() {
+    return FAMILIES.filter((f) => {
+      const a = state.cards.find((c) => c.id === uid(f[0]));
+      const b = state.cards.find((c) => c.id === uid(f[1]));
+      return !!(a && b);
+    });
+  }
+
+  function makeMorphQ(f, dir) {
+    const base = f[0];
+    const derived = f[1];
+    const rule = f[2];
+    const card = state.cards.find((c) => c.id === uid(dir === 'derive' ? base : derived))
+      || state.cards.find((c) => c.id === uid(base))
+      || state.cards.find((c) => c.id === uid(derived));
+    if (!card) return null;
+    const pool = FAMILIES.filter((x) => x[0] !== base).map((x) => (dir === 'derive' ? x[1] : x[0]));
+    shuffle(pool);
+    const opts = [{ text: dir === 'derive' ? derived : base, ok: true }]
+      .concat(pool.slice(0, 3).map((t) => ({ text: t, ok: false })));
+    shuffle(opts);
+    return {
+      kind: 'morph',
+      item: { card: card, sense: { cn: rule, pos: '' }, key: 'morph::' + base, idx: 0 },
+      prompt: dir === 'derive' ? base : derived,
+      ask: dir === 'derive' ? '它的名词形式是？' : '它是由哪个词变来的？',
+      opts: opts,
+      correctCount: 1,
+      extra: base + ' → ' + derived + '（' + rule + '）'
+    };
+  }
+
+  function buildMorphQuestions(cap) {
+    const list = shuffle(morphAvailable());
+    if (!list.length) return [];
+    const out = [];
+    for (let i = 0; i < cap; i++) {
+      const f = list[i % list.length];
+      const q = makeMorphQ(f, i % 2 === 0 ? 'derive' : 'base');
+      if (q) out.push(q);
+    }
+    return out;
+  }
+
   function buildQuestions(mode, limit, preset) {
     const items = collectItems();
     P.groupIndex = buildGroupIndex();
     const cap = limit || 20;
 
+    if (mode === 'morph') return buildMorphQuestions(cap);
     if (mode === 'mix') {
       const half = Math.ceil(cap / 2);
       const a = buildQuestions('sense', half, preset);
       const b = buildQuestions('synonym', cap - a.length, preset);
       return shuffle(a.concat(b));
+    }
+    if (mode === 'count') {
+      let pool = items.filter((it) => it.card.senses.length > 0);
+      if (preset && preset.length) pool = preset.filter((it) => it.card.senses.length > 0);
+      const picked = sortForReview(pool).slice(0, cap);
+      return picked.map((it, i) => makeCountQ(it, i % 2 === 0 ? 'sense' : 'syn'));
     }
     if (mode === 'synonym') {
       let pool = items.filter((it) => normCn(it.sense.cn));
@@ -1246,7 +1417,7 @@ compromise
       const out = [];
       const usedG = new Set();
       for (let i = 0; i < sorted.length && out.length < cap; i++) {
-        const k = normCn(sorted[i].sense.cn);
+        const k = senseKey(sorted[i].sense);
         if (usedG.has(k)) continue;   // 同一个意思只考一次
         usedG.add(k);
         out.push(makeSynQ(sorted[i]));
@@ -1542,6 +1713,8 @@ compromise
 
   /* ============ 8. 词库视图 ============ */
   let libEditing = new Set();
+  let libFilter = 'all';
+  let libSort = 'added';
 
   function cardStats(card) {
     let right = 0, wrong = 0, mastered = 0, due = 0, seen = 0;
@@ -1567,9 +1740,10 @@ compromise
   }
 
   function renderLibrary() {
-    const q = ($('#lib-search').value || '').toLowerCase().trim();
-    const filter = $('#lib-filter').value;
-    const sort = $('#lib-sort').value;
+    const searchEl = $('#lib-search');
+    const q = ((searchEl && searchEl.value) || '').toLowerCase().trim();
+    const filter = libFilter;
+    const sort = libSort;
 
     let list = state.cards.slice();
     if (q) {
@@ -1671,11 +1845,29 @@ compromise
   }
 
   function bindLibrary() {
-    ['#lib-search', '#lib-filter', '#lib-sort'].forEach((sel) => {
-      const el = $(sel);
-      el.addEventListener('input', renderLibrary);
-      el.addEventListener('change', renderLibrary);
-    });
+    const search = $('#lib-search');
+    if (search) search.addEventListener('input', renderLibrary);
+
+    const fseg = $('#lib-filter-seg');
+    if (fseg) {
+      fseg.addEventListener('click', (e) => {
+        const b = e.target.closest('.seg-btn');
+        if (!b) return;
+        libFilter = b.dataset.f;
+        fseg.querySelectorAll('.seg-btn').forEach((x) => x.classList.toggle('on', x === b));
+        renderLibrary();
+      });
+    }
+    const sseg = $('#lib-sort-seg');
+    if (sseg) {
+      sseg.addEventListener('click', (e) => {
+        const b = e.target.closest('.seg-btn');
+        if (!b) return;
+        libSort = b.dataset.s;
+        sseg.querySelectorAll('.seg-btn').forEach((x) => x.classList.toggle('on', x === b));
+        renderLibrary();
+      });
+    }
 
     const wrap = $('#lib-list');
     wrap.addEventListener('input', (e) => {
@@ -1723,9 +1915,12 @@ compromise
       }
     });
 
-    $('#btn-export').onclick = exportJSON;
-    $('#btn-import-json').onclick = () => $('#file-json').click();
-    $('#file-json').onchange = (e) => {
+    const expBtn = $('#btn-export');
+    if (expBtn) expBtn.onclick = exportJSON;
+    const impBtn = $('#btn-import-json');
+    if (impBtn) impBtn.onclick = () => { const f = $('#file-json'); if (f) f.click(); };
+    const fj = $('#file-json');
+    if (fj) fj.onchange = (e) => {
       const f = e.target.files && e.target.files[0];
       if (!f) return;
       const rd = new FileReader();
@@ -1772,8 +1967,10 @@ compromise
     const groups = buildGroups(state.cards);
     const available = {
       sense: items.filter((it) => it.card.senses.length > 0).length,
-      synonym: new Set(items.map((it) => normCn(it.sense.cn)).filter(Boolean)).size,
-      mix: items.filter((it) => it.card.senses.length > 0).length
+      synonym: new Set(items.map((it) => (normCn(it.sense.cn) ? senseKey(it.sense) : '')).filter(Boolean)).size,
+      mix: items.filter((it) => it.card.senses.length > 0).length,
+      count: items.filter((it) => it.card.senses.length > 0).length,
+      morph: morphAvailable().length
     };
     const today = state.daily[todayKey()] || { seen: 0 };
     const mode = P.mode;
@@ -1870,6 +2067,7 @@ compromise
       if (e.target.closest('#btn-start')) { startSession(P.mode); return; }
       if (e.target.closest('#btn-quit')) { P.phase = 'setup'; renderPractice(); return; }
       if (e.target.closest('#btn-again')) { startSession(P.mode); return; }
+      if (e.target.closest('#btn-count')) { startCountChallenge(); return; }
       if (e.target.closest('#btn-home')) { P.phase = 'setup'; renderPractice(); return; }
       if (e.target.closest('#btn-retry-wrong')) { retryWrong(); return; }
     };
@@ -1914,12 +2112,16 @@ compromise
     const q = currentQ();
     if (!q) { finishSession(); return; }
     P.tries = 0;
-    P.revealed = false;
+    P.revealed = !!q.done;
     updateProgress();
 
-    stage.innerHTML = optionsHtml(q);
+    stage.innerHTML = q.kind === 'count' ? countHtml(q) : optionsHtml(q);
     bindStage(q);
 
+    if (q.done) {
+      if (q.kind === 'count') paintCount(q, false); else paintAnswered(q, false);
+      return;
+    }
     if (q.kind === 'sense' && state.settings.autoSpeak) {
       setTimeout(() => speak(q.answer), 150);
     }
@@ -1962,9 +2164,21 @@ compromise
       '<div class="row gap" style="margin-top:20px">' +
       '<button class="btn primary" id="btn-again">再来一轮</button>' +
       (uniq.length ? '<button class="btn" id="btn-retry-wrong">只练错的（' + uniq.length + '）</button>' : '') +
+      '<button class="btn" id="btn-count">进阶挑战 · 只问数量</button>' +
       '<span class="spacer"></span>' +
       '<button class="btn ghost" id="btn-home">回到设置</button>' +
       '</div></div>';
+  }
+
+  function startCountChallenge() {
+    const seen = new Set();
+    const items = [];
+    P.qs.forEach((q) => {
+      if (q.item && q.item.card && !seen.has(q.item.key)) { seen.add(q.item.key); items.push(q.item); }
+    });
+    if (!items.length) { toast('这一轮没有可用的词'); return; }
+    P.limit = Math.min(Math.max(items.length, 5), 20);
+    startSession('count', items);
   }
 
   function retryWrong() {
@@ -1977,66 +2191,113 @@ compromise
   }
 
   /* ---------- 各题型渲染 ---------- */
-  /* ---------- 题型渲染：全部是多选，不用打字 ---------- */
-  function optionsHtml(q) {
-    const isSyn = q.kind === 'synonym';
-    let head;
-    if (isSyn) {
-      head = '<div class="q-kind">中 → 英 · 选出所有意思对得上的词</div>' +
-        '<div class="cn-prompt">' + (q.pos ? '<span class="pos">' + esc(q.pos) + '</span>' : '') + esc(q.cn) + '</div>' +
-        '<div class="sub q-count">共 <b style="color:var(--accent)">' + q.correctCount + '</b> 个词能表达这个意思</div>';
-    } else {
-      head = '<div class="q-kind">英 → 中 · 选出这个词的全部意思</div>' +
-        '<div class="word-lg sm">' + esc(q.answer) + '</div>' +
-        '<div class="phon-line">' +
-        '<span>' + esc(q.item.card.phonetic ? '/' + q.item.card.phonetic.replace(/^\/|\/$/g, '') + '/' : '') + '</span>' +
-        '<button class="speak" data-say="' + esc(q.answer) + '">🔊</button></div>' +
-        '<div class="sub q-count">共 <b style="color:var(--accent)">' + q.correctCount + '</b> 个意思</div>';
-    }
-    return head +
-      '<div class="options' + (isSyn ? ' en' : '') + '" id="opts">' +
-      q.opts.map((o, i) => '<button class="option" data-i="' + i + '"><span class="mark">✓</span><span>' + esc(o.text) + '</span></button>').join('') +
-      '</div>' +
-      '<div class="actions" id="actions">' +
+  /* ---------- 题型渲染：全是点选，不用打字 ---------- */
+  function barHtml() {
+    return '<div class="actions" id="actions">' +
+      '<button class="btn ghost" id="btn-prev"' + (P.cur > 0 ? '' : ' disabled') + '>上一个</button>' +
       '<button class="btn primary" id="btn-check">提交 <span class="kb">Enter</span></button>' +
       '<span class="spacer"></span><span class="sub" id="sel-count">已选 0 项</span>' +
       '</div>';
   }
 
-  function bindStage(q) {
-    const opts = $('#opts');
-    q.picked = new Set();
-    if (!opts) return;
-    opts.addEventListener('click', (e) => {
-      const b = e.target.closest('.option');
-      if (!b || P.revealed) return;
-      const i = +b.dataset.i;
-      if (q.picked.has(i)) q.picked.delete(i); else q.picked.add(i);
-      b.classList.toggle('picked', q.picked.has(i));
-      const sc = $('#sel-count');
-      if (sc) sc.textContent = '已选 ' + q.picked.size + ' 项';
-    });
-    $('#btn-check').onclick = () => checkOptions(q);
+  function optionsHtml(q) {
+    if (q.kind === 'morph') {
+      return '<div class="q-kind">构词法 · 词根词缀</div>' +
+        '<div class="word-lg sm">' + esc(q.prompt) + '</div>' +
+        '<div class="sub q-count">' + esc(q.ask) + '</div>' +
+        '<div class="options en" id="opts">' +
+        q.opts.map((o, i) => '<button class="option" data-i="' + i + '"><span class="mark">✓</span><span>' + esc(o.text) + '</span></button>').join('') +
+        '</div>' + barHtml();
+    }
+    const isSyn = q.kind === 'synonym';
+    let head;
+    if (isSyn) {
+      head = '<div class="q-kind">中 → 英 · 选出所有意思对得上的词</div>' +
+        '<div class="cn-prompt">' + (q.pos ? '<span class="pos">' + esc(q.pos) + '</span>' : '') + esc(q.cn) + '</div>';
+    } else {
+      head = '<div class="q-kind">英 → 中 · 选出这个词的全部意思</div>' +
+        '<div class="word-lg sm">' + esc(q.answer) + '</div>' +
+        '<div class="phon-line">' +
+        '<span>' + esc(q.item.card.phonetic ? '/' + q.item.card.phonetic.replace(/^\/|\/$/g, '') + '/' : '') + '</span>' +
+        '<button class="speak" data-say="' + esc(q.answer) + '">🔊</button></div>';
+    }
+    return head +
+      '<div class="options' + (isSyn ? ' en' : '') + '" id="opts">' +
+      q.opts.map((o, i) => '<button class="option" data-i="' + i + '"><span class="mark">✓</span><span>' + esc(o.text) + '</span></button>').join('') +
+      '</div>' + barHtml();
   }
 
-  /* ---------- 判题 ---------- */
-  function checkOptions(q, forced) {
-    if (P.revealed) return;
-    const picked = q.picked || new Set();
-    let ok = true;
-    q.opts.forEach((o, i) => { if (!!o.ok !== picked.has(i)) ok = false; });
-    P.revealed = true;
-    recordAnswer(q.item, ok);
-    P.answered += 1;
-    if (ok) {
-      P.correct += 1; P.streak += 1; P.best = Math.max(P.best, P.streak);
+  function countHtml(q) {
+    const isSense = q.sub === 'sense';
+    let head;
+    if (isSense) {
+      head = '<div class="q-kind">进阶 · 这个词有几个意思？</div>' +
+        '<div class="word-lg sm">' + esc(q.item.card.en) + '</div>' +
+        '<div class="phon-line">' +
+        '<span>' + esc(q.item.card.phonetic ? '/' + q.item.card.phonetic.replace(/^\/|\/$/g, '') + '/' : '') + '</span>' +
+        '<button class="speak" data-say="' + esc(q.item.card.en) + '">🔊</button></div>';
     } else {
-      P.wrong += 1; P.streak = 0; P.wrongItems.push(q.item);
-      if (!q.retry) P.qs.push(Object.assign({}, q, { retry: true, picked: null, opts: q.opts.map((o) => Object.assign({}, o)) }));
+      head = '<div class="q-kind">进阶 · 有几个词能表达这个意思？</div>' +
+        '<div class="cn-prompt">' + (q.pos ? '<span class="pos">' + esc(q.pos) + '</span>' : '') + esc(q.cn) + '</div>';
     }
-    updateProgress();
-    saveState();
+    return head +
+      '<div class="nums" id="nums">' +
+      q.nums.map((n) => '<button class="num" data-n="' + n + '">' + n + '</button>').join('') +
+      '</div>' +
+      '<div class="actions" id="actions">' +
+      '<button class="btn ghost" id="btn-prev"' + (P.cur > 0 ? '' : ' disabled') + '>上一个</button>' +
+      '<button class="btn ghost" id="btn-check">不会，看答案</button>' +
+      '<span class="spacer"></span><span class="sub" id="sel-count"></span>' +
+      '</div>';
+  }
 
+  function bindStage(q) {
+    const prev = $('#btn-prev');
+    if (prev) prev.onclick = () => goPrev();
+
+    if (q.kind === 'count') {
+      const nums = $('#nums');
+      if (nums) {
+        nums.addEventListener('click', (e) => {
+          const b = e.target.closest('.num');
+          if (!b || P.revealed) return;
+          answerCount(q, +b.dataset.n);
+        });
+      }
+      const ck = $('#btn-check');
+      if (ck) ck.onclick = () => revealCount(q);
+      return;
+    }
+
+    q.picked = q.picked || new Set();
+    const opts = $('#opts');
+    if (opts) {
+      opts.addEventListener('click', (e) => {
+        const b = e.target.closest('.option');
+        if (!b || P.revealed) return;
+        const i = +b.dataset.i;
+        if (q.picked.has(i)) q.picked.delete(i); else q.picked.add(i);
+        b.classList.toggle('picked', q.picked.has(i));
+        const sc = $('#sel-count');
+        if (sc) sc.textContent = '已选 ' + q.picked.size + ' 项';
+      });
+    }
+    const ck = $('#btn-check');
+    if (ck) ck.onclick = () => checkOptions(q);
+  }
+
+  function goPrev() {
+    if (P.cur <= 0) return;
+    P.nextReadyAt = 0;
+    P.cur -= 1;
+    renderStage();
+  }
+
+  /** 把「已答」状态画到当前题目上（回看时也走这里） */
+  function paintAnswered(q, speakOn) {
+    const picked = q.picked || new Set();
+    const ok = q.okResult;
+    const isSyn = q.kind === 'synonym';
     const opts = $('#opts');
     if (opts) {
       Array.from(opts.children).forEach((el, i) => {
@@ -2049,33 +2310,28 @@ compromise
         else if (mark) mark.textContent = '';
       });
     }
-    const isSyn = q.kind === 'synonym';
     let missed = 0;
     let extra = 0;
     q.opts.forEach((o, i) => {
       if (o.ok && !picked.has(i)) missed += 1;
       if (!o.ok && picked.has(i)) extra += 1;
     });
-
-    // 结果就地显示在原来的「已选 N 项」位置，页面高度不变
     const sc = $('#sel-count');
     if (sc) {
       sc.className = 'vline ' + (ok ? 'good' : 'bad');
       sc.textContent = ok
-        ? '✓ 全对' + (P.streak > 1 ? ' · 连击 ×' + P.streak : '')
+        ? '✓ 全对' + ((q.streakAt || 0) > 1 ? ' · 连击 ×' + q.streakAt : '')
         : '✗ ' + [missed ? '漏 ' + missed : '', extra ? '多选 ' + extra : ''].filter(Boolean).join(' · ');
     }
-
-    // 提交按钮直接变成「下一个」
     const btn = $('#btn-check');
     if (btn) {
       btn.disabled = false;
       btn.innerHTML = '下一个 <span class="kb">Enter</span>';
       btn.onclick = () => advance();
     }
-    // 笔记放在按钮「下面」，不占按钮位置，也不会把它挤走
     const card = q.item.card;
     const extras = [];
+    if (q.extra) extras.push(q.extra);
     if (card.note) extras.push('📎 ' + esc(card.note));
     const actions = $('#actions');
     if (extras.length && actions) {
@@ -2085,7 +2341,119 @@ compromise
       actions.insertAdjacentElement('afterend', box);
     }
     P.nextReadyAt = now() + 260;
-    if (!isSyn) speak(q.answer);
+    if (speakOn && !isSyn && q.answer) speak(q.answer);
+  }
+
+  function paintCount(q, speakOn) {
+    const nums = $('#nums');
+    if (nums) {
+      Array.from(nums.children).forEach((el) => {
+        const n = +el.dataset.n;
+        el.classList.remove('ok', 'bad', 'warn');
+        if (n === q.correct) el.classList.add('ok');
+        else if (n === q.pickedNum) el.classList.add(q.countState === 'more' ? 'warn' : 'bad');
+      });
+    }
+    const sc = $('#sel-count');
+    if (sc) {
+      if (q.countState === 'exact') { sc.className = 'vline good'; sc.textContent = '✓ 正好 ' + q.correct + ' 个'; }
+      else if (q.countState === 'less') { sc.className = 'vline bad'; sc.textContent = '✗ 少了 · 实际 ' + q.correct + ' 个'; }
+      else if (q.countState === 'more') { sc.className = 'vline warn'; sc.textContent = '⚠ 存疑 · 我们只收了 ' + q.correct + ' 个'; }
+      else { sc.className = 'vline bad'; sc.textContent = '✗ 没答 · 实际 ' + q.correct + ' 个'; }
+    }
+    const btn = $('#btn-check');
+    if (btn) {
+      btn.disabled = false;
+      btn.className = 'btn primary';
+      btn.innerHTML = '下一个 <span class="kb">Enter</span>';
+      btn.onclick = () => advance();
+    }
+    const card = q.item.card;
+    const isSense = q.sub === 'sense';
+    const actions = $('#actions');
+    if (actions) {
+      const box = document.createElement('div');
+      box.className = 'count-answer';
+      const title = isSense
+        ? '「' + esc(card.en) + '」有 <b>' + q.correct + '</b> 个意思'
+        : '能表达「' + esc(q.cn) + '」的有 <b>' + q.correct + '</b> 个词';
+      const items = isSense
+        ? card.senses.map((s) => '<span class="sense-tag">' + (s.pos ? '<span class="pos">' + esc(s.pos) + '</span>' : '') + esc(s.cn) + '</span>').join('')
+        : (P.groupIndex.get(senseKey(q.item.sense)) || [card.en]).map((w) => '<span class="ca-word">' + esc(w) + '</span>').join('');
+      box.innerHTML = '<div class="ca-title">' + title + '</div>' +
+        '<div class="ca-list">' + items + '</div>' +
+        (card.note ? '<div class="ca-note">📎 ' + esc(card.note) + '</div>' : '');
+      actions.insertAdjacentElement('afterend', box);
+    }
+    P.nextReadyAt = now() + 260;
+    if (speakOn && isSense) speak(card.en);
+  }
+
+  /** 数量题：没选数字就点按钮 = 不会，直接看答案 */
+  function revealCount(q) {
+    if (P.revealed) return;
+    q.done = true;
+    q.okResult = false;
+    q.pickedNum = null;
+    q.countState = 'none';
+    P.revealed = true;
+    recordAnswer(q.item, false);
+    P.answered += 1;
+    P.wrong += 1;
+    P.streak = 0;
+    P.wrongItems.push(q.item);
+    q.streakAt = P.streak;
+    updateProgress();
+    saveState();
+    paintCount(q, true);
+  }
+
+  /* ---------- 判题 ---------- */
+  function checkOptions(q) {
+    if (P.revealed) return;
+    const picked = q.picked || new Set();
+    let ok = true;
+    q.opts.forEach((o, i) => { if (!!o.ok !== picked.has(i)) ok = false; });
+    q.done = true;
+    q.okResult = ok;
+    P.revealed = true;
+    recordAnswer(q.item, ok);
+    P.answered += 1;
+    if (ok) {
+      P.correct += 1; P.streak += 1; P.best = Math.max(P.best, P.streak);
+    } else {
+      P.wrong += 1; P.streak = 0; P.wrongItems.push(q.item);
+      if (!q.retry) {
+        P.qs.push(Object.assign({}, q, {
+          retry: true, picked: null, done: false, okResult: null,
+          opts: q.opts.map((o) => Object.assign({}, o))
+        }));
+      }
+    }
+    q.streakAt = P.streak;
+    updateProgress();
+    saveState();
+    paintAnswered(q, true);
+  }
+
+  function answerCount(q, n) {
+    if (P.revealed) return;
+    const state2 = n === q.correct ? 'exact' : (n < q.correct ? 'less' : 'more');
+    const ok = state2 !== 'less';          // 多选了不算错，标存疑
+    q.done = true;
+    q.okResult = ok;
+    q.pickedNum = n;
+    q.countState = state2;
+    P.revealed = true;
+    recordAnswer(q.item, ok);
+    P.answered += 1;
+    if (state2 === 'exact') { P.correct += 1; P.streak += 1; P.best = Math.max(P.best, P.streak); }
+    else if (state2 === 'more') { P.correct += 1; }
+    else { P.wrong += 1; P.streak = 0; P.wrongItems.push(q.item); }
+    q.streakAt = P.streak;
+    updateProgress();
+    saveState();
+    paintCount(q, true);
   }
 
   /* ---------- 键盘 ---------- */
@@ -2170,6 +2538,12 @@ compromise
         }).join('') + '</div>'
         : '<div class="empty" style="padding:20px">还没有错词记录</div>') +
       '</div>' +
+
+      '<div class="panel">' +
+      '<div class="panel-head"><h2>构词法速查</h2><p>同源词不是同义词——别把 defend 和 defense 当一组背</p></div>' +
+      '<div class="affix-list">' +
+      AFFIXES.map((a) => '<div class="affix-row"><b>' + esc(a[0]) + '</b><span>' + esc(a[1]) + '</span></div>').join('') +
+      '</div></div>' +
 
       '<div class="panel">' +
       '<div class="panel-head"><h2>数据</h2><p>数据只存在这台电脑的浏览器里，换设备请导出 JSON。</p></div>' +
