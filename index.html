@@ -1182,10 +1182,7 @@ compromise
     return due.concat(fresh, later);
   }
 
-  function recordAnswer(item, ok) {
-    const key = item.key;
-    let rec = state.srs[key];
-    if (!rec) { rec = state.srs[key] = { box: 0, due: 0, seen: 0, right: 0, wrong: 0, last: 0 }; }
+  function bumpRec(rec, ok) {
     rec.seen += 1;
     rec.last = now();
     if (ok) {
@@ -1197,11 +1194,25 @@ compromise
       rec.box = clamp(rec.box - 1, 0, BOX_MAX);
       rec.due = now() + RETRY_GAP;
     }
+  }
+
+  function ensureRec(key) {
+    if (!state.srs[key]) state.srs[key] = { box: 0, due: 0, seen: 0, right: 0, wrong: 0, last: 0 };
+    return state.srs[key];
+  }
+
+  /** wholeCard=true：这个词的所有意思一起记（一词多义答的是整词） */
+  function recordAnswer(item, ok, wholeCard) {
+    if (wholeCard && item.card && item.card.senses && item.card.senses.length) {
+      item.card.senses.forEach((sn) => bumpRec(ensureRec(itemKey(item.card, sn, P.level)), ok));
+    } else {
+      bumpRec(ensureRec(item.key), ok);
+    }
     state.seen[item.card.id] = (state.seen[item.card.id] || 0) + 1;
     const d = dailyBucket();
     d.seen += 1;
     if (ok) d.correct += 1; else d.wrong += 1;
-    state.log.push({ t: now(), en: item.card.en, cn: item.sense ? item.sense.cn : '', mode: P.mode, ok: !!ok });
+    state.log.push({ t: now(), en: item.card.en, cn: item.sense ? item.sense.cn : '', mode: P.mode, level: P.level, ok: !!ok });
     if (state.log.length > 3000) state.log.splice(0, state.log.length - 3000);
   }
 
@@ -1229,7 +1240,7 @@ compromise
     { id: 'sense', icon: '🎭', name: '一词多义', desc: '给一个英文词，把它的意思找全', tag: '英 → 中' },
     { id: 'synonym', icon: '🔗', name: '一义多词', desc: '给一个中文意思，把所有对应的词找出来', tag: '中 → 英' }
   ];
-  const OTHER_MODES = ['morph'];
+  const OTHER_MODES = ['morph', 'single'];
 
   /** 构词家族：base → derived，规则说明 */
   const FAMILIES = [
@@ -1425,6 +1436,11 @@ compromise
     return out;
   }
 
+  /** 这个意思有几个词能表达（≥2 才算「一义多词」） */
+  function groupSize(sense) {
+    return (P.groupIndex.get(senseKey(sense)) || []).length;
+  }
+
   function buildQuestions(mode, limit, preset) {
     const items = collectItems(P.level);
     P.groupIndex = buildGroupIndex();
@@ -1432,9 +1448,20 @@ compromise
     const lv = P.level === 'hard' ? 'hard' : 'normal';
 
     if (mode === 'morph') return buildMorphQuestions(cap);
+    if (mode === 'single') {
+      // 一词一义：只有一个意思的词
+      let pool = items.filter((it) => it.card.senses.length === 1);
+      if (preset && preset.length) pool = preset.filter((it) => it.card.senses.length === 1);
+      return sortForReview(pool).slice(0, cap).map((it) => {
+        const q = makeSenseQ(it);
+        q.level = lv;
+        return q;
+      });
+    }
     if (mode === 'synonym') {
-      let pool = items.filter((it) => normCn(it.sense.cn));
-      if (preset && preset.length) pool = preset.filter((it) => normCn(it.sense.cn));
+      // 一义多词：只出真正的同义组（≥2 个词），一个词的不算
+      let pool = items.filter((it) => normCn(it.sense.cn) && groupSize(it.sense) >= 2);
+      if (preset && preset.length) pool = preset.filter((it) => normCn(it.sense.cn) && groupSize(it.sense) >= 2);
       const sorted = sortForReview(pool);
       const out = [];
       const usedG = new Set();
@@ -1448,8 +1475,16 @@ compromise
       }
       return out;
     }
-    let pool = items.filter((it) => it.card.senses.length > 0);
-    if (preset && preset.length) pool = preset;
+    // 一词多义：只出两个意思以上的词，且一个词只出一道（取最急的那个意思）
+    let src = items.filter((it) => it.card.senses.length >= 2);
+    if (preset && preset.length) src = preset.filter((it) => it.card.senses.length >= 2);
+    const perCard = new Map();
+    const rank = (x) => (!x.rec || !x.rec.seen) ? -1 : (x.rec.due <= now() ? x.rec.box : 100 + x.rec.box);
+    src.forEach((it) => {
+      const cur = perCard.get(it.card.id);
+      if (!cur || rank(it) < rank(cur)) perCard.set(it.card.id, it);
+    });
+    const pool = Array.from(perCard.values());
     return sortForReview(pool).slice(0, cap).map((it) => {
       const q = makeSenseQ(it);
       q.level = lv;
@@ -1992,10 +2027,14 @@ compromise
     const fresh = items.filter((it) => isNew(it.rec)).length;
     const due = items.filter((it) => it.rec && it.rec.seen && it.rec.due <= now() && it.rec.box < BOX_MAX).length;
     const mastered = items.filter((it) => it.rec && it.rec.box >= 4).length;
+    const groups = buildGroups(state.cards);
+    const groupCount = new Map();
+    groups.forEach((g) => groupCount.set(g.key, g.members.length));
     const available = {
-      sense: items.filter((it) => it.card.senses.length > 0).length,
-      synonym: new Set(items.map((it) => (normCn(it.sense.cn) ? senseKey(it.sense) : '')).filter(Boolean)).size,
-      morph: morphAvailable().length
+      sense: new Set(items.filter((it) => it.card.senses.length >= 2).map((it) => it.card.id)).size,
+      synonym: groups.length,
+      morph: morphAvailable().length,
+      single: items.filter((it) => it.card.senses.length === 1).length
     };
     const today = state.daily[todayKey()] || { seen: 0 };
     const mode = P.mode;
@@ -2008,7 +2047,10 @@ compromise
         '<button class="btn primary" data-go="import">去导入单词</button></div></div>';
     }
 
-    const cardOf = (id) => MODES.concat([{ id: 'morph', icon: '🧬', name: '构词法' }]).find((m) => m.id === id);
+    const cardOf = (id) => MODES.concat([
+      { id: 'morph', icon: '🧬', name: '构词法' },
+      { id: 'single', icon: '1️⃣', name: '一词一义' }
+    ]).find((m) => m.id === id);
     const modeCards = MODES.map((m) => {
       const n = available[m.id] || 0;
       const dis = n ? '' : ' disabled';
@@ -2031,13 +2073,15 @@ compromise
 
     const tip = mode === 'morph'
       ? '词根词缀题：一个词变出另一个词。同源词是构词关系，不是同义词。'
-      : level === 'hard'
-        ? (mode === 'synonym'
-          ? '进阶：不给选项，自己在空框里打英文。框数 = 有几个词能表达这个意思。'
-          : '进阶：不给选项，自己在空框里打中文。框数 = 这个词有几个意思。')
-        : (mode === 'synonym'
-          ? '普通：下面把候选词都列出来，选出所有能表达这个意思的，选多了也错。'
-          : '普通：下面把释义都列出来，选出这个词的所有意思，选多了也错。');
+      : mode === 'single'
+        ? '一词一义：只练只有一个意思的词。' + (level === 'hard' ? '自己在空框里打中文。' : '从选项里选出它唯一的意思。')
+        : level === 'hard'
+          ? (mode === 'synonym'
+            ? '进阶：不给选项，自己在空框里打英文。框数 = 有几个词能表达这个意思。'
+            : '进阶：不给选项，自己在空框里打中文。框数 = 这个词有几个意思。')
+          : (mode === 'synonym'
+            ? '普通：下面把候选词都列出来，选出所有能表达这个意思的，选多了也错。'
+            : '普通：下面把释义都列出来，选出这个词的所有意思，选多了也错。');
 
     return '<div class="panel">' +
       '<div class="hero-row">' +
@@ -2461,7 +2505,7 @@ compromise
     q.done = true;
     q.okResult = ok;
     P.revealed = true;
-    recordAnswer(q.item, ok);
+    recordAnswer(q.item, ok, q.kind === 'sense' || q.kind === 'single');
     P.answered += 1;
     if (ok) {
       P.correct += 1; P.streak += 1; P.best = Math.max(P.best, P.streak);
