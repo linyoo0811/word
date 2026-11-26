@@ -2564,6 +2564,8 @@ compromise
             }
             return;
           }
+          // 第一个框是空的：退格 = 回到上一题（Enter 再回来）
+          if (bi === 0) { e.preventDefault(); goPrev(); return; }
         }
         if (e.key !== 'Enter' || e.isComposing) return;
         e.preventDefault();
@@ -2825,7 +2827,14 @@ compromise
     const r = g.results[idx];
     if (r && r.state === 'ok') {
       paintAnswered(q, false);
-      if (g.ok) { checkRedo(q); return; }          // 全对了 → 过关
+      if (g.ok) {
+        checkRedo(q);                        // 标成过关（停在 ✓ 状态）
+        const btnNext = $('#btn-check');
+        if (btnNext) {
+          btnNext.focus({ preventScroll: true });   // 焦点交给「下一个」，再按 Enter 才走
+        }
+        return;
+      }
       const nxt = $$('#slots .slot-input').filter((x) => !x.classList.contains('ok'))[0];
       if (nxt) {
         nxt.focus({ preventScroll: true });
