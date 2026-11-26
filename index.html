@@ -245,6 +245,13 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .mode-card .mt { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; }
 .mode-card .md { font-size: 12.5px; color: var(--muted); }
 .mode-card .mtag { font-size: 11px; padding: 1px 7px; border-radius: 6px; background: rgba(255, 255, 255, .06); color: var(--dim); font-weight: 600; }
+
+/* 精简模式卡 */
+.mode-card.slim { flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px 22px; min-height: 0; }
+.mode-card.slim .mt { font-size: 24px; font-weight: 700; letter-spacing: .02em; }
+.mode-card.slim .md.count { font-size: 13px; color: var(--dim); margin: 0; }
+.mode-card.slim .mi { display: none; }
+
 .start-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .seg {
   display: inline-flex; align-items: center; gap: 3px;
@@ -2095,11 +2102,9 @@ compromise
       const n = available[m.id] || 0;
       const dis = n ? '' : ' disabled';
       const sel = m.id === mode ? ' sel' : '';
-      return '<button class="mode-card' + sel + dis + '" data-mode="' + m.id + '">' +
-        '<span class="mi">' + m.icon + '</span>' +
-        '<span class="mt">' + m.name + '<span class="mtag">' + m.tag + '</span></span>' +
-        '<span class="md">' + m.desc + '</span>' +
-        '<span class="md" style="color:var(--dim);margin-top:4px">' + (n ? '可练 ' + n + ' 项' : '暂无可练内容') + '</span>' +
+      return '<button class="mode-card slim' + sel + dis + '" data-mode="' + m.id + '">' +
+        '<span class="mt">' + m.name + '</span>' +
+        '<span class="md count">' + (n ? '可练 ' + n + ' 项' : '暂无') + '</span>' +
         '</button>';
     }).join('');
 
@@ -2111,18 +2116,6 @@ compromise
         m.icon + ' ' + m.name + '<span class="pill-n">' + (n || 0) + '</span></button>';
     }).join('');
 
-    const tip = mode === 'morph'
-      ? '词根词缀题：一个词变出另一个词。同源词是构词关系，不是同义词。'
-      : mode === 'single'
-        ? '一词一义：只练只有一个意思的词。' + (level === 'hard' ? '自己在空框里打中文。' : '从选项里选出它唯一的意思。')
-        : level === 'hard'
-          ? (mode === 'synonym'
-            ? '进阶：不给选项，自己在空框里打英文。框数 = 有几个词能表达这个意思。'
-            : '进阶：不给选项，自己在空框里打中文。框数 = 这个词有几个意思。')
-          : (mode === 'synonym'
-            ? '普通：下面把候选词都列出来，选出所有能表达这个意思的，选多了也错。'
-            : '普通：下面把释义都列出来，选出这个词的所有意思，选多了也错。');
-
     return '<div class="panel">' +
       '<div class="hero-row">' +
       '<div class="stat"><b>' + state.cards.length + '</b><span>单词</span></div>' +
@@ -2130,24 +2123,22 @@ compromise
       '<div class="stat ' + ((due + fresh) > 0 ? 'warn' : '') + '"><b>' + (due + fresh) + '</b><span>待办</span><span class="s2">复习 ' + due + ' · 新 ' + fresh + '</span></div>' +
       '<div class="stat hi"><b>' + mastered + '</b><span>已掌握释义</span></div>' +
       '</div>' +
-      '<div class="sub" style="margin-top:10px">今天已经练了 ' + today.seen + ' 次 · 词库共 ' + buildGroups(state.cards).length + ' 组同义 · 当前进度：' + (level === 'hard' ? '进阶' : '普通') + '</div>' +
       '</div>' +
       '<div class="mode-grid two">' + modeCards + '</div>' +
       '<div class="other-modes"><span class="seg-label">其他</span>' + otherBtns + '</div>' +
       '<div class="panel">' +
       '<div class="start-bar">' +
-      '<div class="seg" id="level-seg"><span class="seg-label">难度</span>' +
+      '<div class="seg" id="level-seg">' +
       '<button class="seg-btn' + (level === 'normal' ? ' on' : '') + '" data-lv="normal">普通</button>' +
       '<button class="seg-btn' + (level === 'hard' ? ' on' : '') + '" data-lv="hard">进阶</button>' +
       '</div>' +
-      '<div class="seg" id="limit-seg"><span class="seg-label">本轮</span>' +
-      [10, 20, 30, 50].map((n) => '<button class="seg-btn' + (n === P.limit ? ' on' : '') + '" data-n="' + n + '">' + n + '</button>').join('') +
+      '<div class="seg" id="limit-seg">' +
+      [20, 50].map((n) => '<button class="seg-btn' + (n === P.limit ? ' on' : '') + '" data-n="' + n + '">' + n + '</button>').join('') +
       '</div>' +
       '<label class="check"><input type="checkbox" id="auto-speak"' + (state.settings.autoSpeak ? ' checked' : '') + '> 自动发音</label>' +
       '<span class="spacer"></span>' +
-      '<button class="btn primary lg" id="btn-start">开始 · ' + (cardOf(mode) || MODES[0]).name + (mode === 'morph' ? '' : '（' + (level === 'hard' ? '进阶' : '普通') + '）') + '</button>' +
+      '<button class="btn primary lg" id="btn-start">开始</button>' +
       '</div>' +
-      '<div class="sub" style="margin-top:10px">' + tip + '</div>' +
       '</div>';
   }
 
@@ -2327,16 +2318,13 @@ compromise
 
   function questionHead(q) {
     if (q.kind === 'morph') {
-      return '<div class="q-kind">构词法 · 词根词缀</div>' +
-        '<div class="word-lg sm">' + esc(q.prompt) + '</div>' +
+      return '<div class="word-lg sm">' + esc(q.prompt) + '</div>' +
         '<div class="sub q-count">' + esc(q.ask) + '</div>';
     }
     if (q.kind === 'synonym') {
-      return '<div class="q-kind">中 → 英 · ' + (q.level === 'hard' ? '打出能表达这个意思的词' : '选出能表达这个意思的词') + '</div>' +
-        '<div class="cn-prompt">' + (q.pos ? '<span class="pos">' + esc(q.pos) + '</span>' : '') + esc(q.cn) + '</div>';
+      return '<div class="cn-prompt">' + (q.pos ? '<span class="pos">' + esc(q.pos) + '</span>' : '') + esc(q.cn) + '</div>';
     }
-    return '<div class="q-kind">英 → 中 · ' + (q.level === 'hard' ? '打出这个词的意思' : '选出这个词的意思') + '</div>' +
-      '<div class="word-lg sm">' + esc(q.answer) + '</div>' +
+    return '<div class="word-lg sm">' + esc(q.answer) + '</div>' +
       '<div class="phon-line">' +
       '<span>' + esc(q.item.card.phonetic ? '/' + q.item.card.phonetic.replace(/^\/|\/$/g, '') + '/' : '') + '</span>' +
       '<button class="speak" data-say="' + esc(q.answer) + '">🔊</button></div>';
@@ -2354,19 +2342,22 @@ compromise
     const en = (q.kind === 'synonym' || q.kind === 'morph');
     const inputs = q.slots.map((v, i) =>
       '<input class="slot-input' + (en ? ' en' : '') + '" data-slot="' + i + '"' +
+      ' name="wf-' + i + '-' + Math.random().toString(36).slice(2, 7) + '"' +
       ' value="' + esc(v || '') + '" placeholder="' + (en ? 'word' : '意思') + '"' +
       ' autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"' +
+      ' inputmode="text" enterkeyhint="done" data-form-type="other" data-lpignore="true"' +
       (q.locked ? ' readonly' : '') + '>'
     ).join('');
-    const add = q.locked ? '' : '<button class="add-slot" id="add-slot" title="再加一个">＋</button>';
-    return inputs + add;
+    return inputs;
   }
 
   function questionHtml(q) {
     const en = (q.kind === 'synonym' || q.kind === 'morph');
     let body;
     if (q.level === 'hard') {
-      if (!Array.isArray(q.slots) || !q.slots.length) q.slots = [''];
+      if (!Array.isArray(q.slots) || q.slots.length !== q.correctCount) {
+        q.slots = new Array(Math.max(1, q.correctCount)).fill('');
+      }
       body = '<div class="slots" id="slots">' + slotsInner(q) + '</div>' +
         '<div class="spell-hint" id="spell-hint" hidden></div>';
     } else {
@@ -2543,12 +2534,7 @@ compromise
 
     if (q.level === 'hard') {
       renderSlots(q);
-      const box = $('#slots');
-      if (box) {
-        box.addEventListener('click', (e) => {
-          if (e.target.closest('#add-slot')) { e.preventDefault(); newSlot(q); }
-        });
-      }
+
       const inputs = $$('#slots .slot-input');
       if (inputs[0] && !q.locked) setTimeout(() => { try { inputs[0].focus(); } catch (e) {} }, 60);
     } else {
