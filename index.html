@@ -4,14 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#080b0e">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="icon" type="image/png" href="./icon-32.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="词锻">
+<meta name="apple-mobile-web-app-title" content="word">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="data:image/png;base64,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">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='15'%20fill='%23b8f08e'/%3E%3Ctext%20x='32'%20y='46'%20font-size='38'%20text-anchor='middle'%20fill='%230e1a06'%20font-family='Georgia,serif'%3E%E8%AF%8D%3C/text%3E%3C/svg%3E">
-<title>词锻 · 一词多义 / 同义多词</title>
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAEjElEQVR42r1WW28TVxD+ztnjeGNiu02khiRcbKgdlYcmDymiiIsVaEikQqT2P1SFlkCr/IJKvFSoD0h94D9U0MgGt4RLKbVNGraEiyD4QoCISqQksZ3Yjte7O3041IodxzWt2nnanZ3zzcyZb3YG+I+F1dQqisIYsyyLiP4egjHOORGZpolGrBlj/zDYWmcr3jnnlmUBOHCg/8iRw93dvuZmtX4OjKFQKMbjiWAwND5+eTVItXDOAXR0bBwbO2dZOr226KHQ2KZNXWWoigzkJba3t1+58uOOHe8C5r17d2Kxm+l0BsB6lZAX4na7d+3a2dPTC4hE4mF//wfPn/8uS1gd/tjYd0SUz2dGR79UVbXx27fbm06eHFleThNROByUZa/gDIBAYJ9l6ZZVGh39QkYnGhVFpnL8+DHTLBEZAwMHy7AAIIQAcObMN0R0966mKIqiKJxz9pesJklNDedMgmhajIjOnv22DMsByMvq7vYDuHEjYppmuQmkSLjVBa3SWNYrzfXrvwDw+/0AZFuIcg3tdhVANpuVGs55W1sbY8w0jfn5BQCqqrpcLoAtLWUKhRUAra1vCmEDaH5+QYLI46pqL8PymsSQZQ8GzyWTjyYnY52dHQBOnfoqlUqkUo9On/4aQFtbazT6czIZD4eDQggJt7bReE1WCCEMw5iZeeJ0vuH1er1eL4ChoYGWFkdLS/Pg4ACALVs2+3xvO53uZ8+eFYtFm81WE4rXIXg0GiMiIrF9u7ejY6PP5y8Ucvl83uPxbtvm9Xg8nNuJKBabqBn7q1hramW+mvabaRaEcPj9fl0vCdGcz+eI4HA0BQL729vfAhhR8dYtrU4z1nYgefXgwfSLFy+6ury9vT0ez1aAIpGYruvDwx8NDQ1wrgB4+fKP+/cflI+8Rgac83Q6PT0d7+ry7tz5HpEFsHD4h+Xl3PDwx/v375OGyWRqbm6OMbZeBny97pe9rmkaAIfD4XI5ATMajUUiMcvSnU7nhg0bAHb79lRF0zbuACAAExOTgGWahhC22dknDx9OP36cSiYTNltTqVQCaGJisv5val0Hsjnv3Lmr6zlVVYVw3Lz5az5fMAwzEokqimq32y1LlxmsV4D6DiwAT58+nZzUMpns4uJCKHRRfrpwIbywMJ/NZqemppLJVB0K1ShylalhmIcOfWi3NxEhm81I5fnzY1ev/sQYdL20srKy+tRaT0L2CBEVi0UALperyiKXy+VyuarkFhcXa8brcjkBSCgJy8uEiccTAPbseV9Ot7X/5LXzfbWNfNi7dw8R4vFkBbXkU39/gKhkWaUTJz6XXhseOEKGePToJ6apExmDg4equSstQqHviWh5OT0y8pkcFw2KoijHjn26tLRAROPjFznn5ZFZMfQ7OzuuXbvs870DGJqmRSLRTCZTf/dijLnd7t27d/X19QG2mZlEIHBwdna2euiXk9i8eVM4HCIqvf7aYly6FPZ4ttZeW6oWr6GhweHhI36/r7nZXid8IjCGlZViPJ4MBoOyUdZdvP796ghUbiv1l1/J98aX3/KU/7/lT/LZwrbk+BpPAAAAAElFTkSuQmCC">
+<title>word</title>
 <style>/* ===== 词锻 · styles ===== */
 *, *::before, *::after { box-sizing: border-box; }
 :root {
@@ -158,7 +161,7 @@ main { display: block; }
 .icon-btn:hover { color: var(--text); background: rgba(255, 255, 255, .07); }
 
 /* ----- forms ----- */
-textarea, input:not([type=checkbox]):not([type=radio]):not([type=file]), select {
+textarea, input:not([type=checkbox]):not([type=radio]):not([type=file]):not(.slot-input), select {
   width: 100%; background: #0b1116; border: 1px solid var(--line);
   border-radius: 12px; padding: 11px 13px; color: var(--text); outline: none;
   transition: border-color .18s, box-shadow .18s; font-size: 14px;
@@ -268,7 +271,19 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .mode-pill.on .pill-n { color: var(--accent); }
 
 /* 填空框 */
-.slots { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.slots { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; align-items: stretch; }
+.add-slot {
+  flex: 0 0 auto; width: 52px; min-height: 58px; border-radius: 13px;
+  border: 1.5px dashed #2b3a48; background: transparent; color: var(--dim);
+  font-size: 21px; line-height: 1; cursor: pointer; transition: .15s;
+}
+.add-slot:hover { border-color: rgba(184, 240, 142, .45); color: var(--accent); background: rgba(184, 240, 142, .06); }
+.shake { animation: wf-shake .3s; }
+@keyframes wf-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
 .slot-input {
   flex: 1 1 200px; max-width: 330px; min-height: 58px; padding: 12px 16px;
   border-radius: 13px; border: 1.5px solid var(--line); background: #0b1116;
@@ -277,8 +292,9 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .slot-input::placeholder { color: #3b4855; font-size: 14px; letter-spacing: .05em; }
 .slot-input.en { font-family: var(--serif); font-size: 19px; font-weight: 600; letter-spacing: .01em; }
 .slot-input:focus { border-color: rgba(184, 240, 142, .55); box-shadow: 0 0 0 3px rgba(184, 240, 142, .12); }
-.slot-input.ok { border-color: rgba(126, 231, 135, .7); background: rgba(126, 231, 135, .08); color: var(--good); }
-.slot-input.bad { border-color: rgba(255, 123, 114, .7); background: rgba(255, 123, 114, .08); color: var(--bad); }
+.slot-input.ok { border-color: rgba(184, 240, 142, .7); background: rgba(184, 240, 142, .10); color: var(--accent); pointer-events: none; cursor: default; }
+.slot-input.bad { border-color: rgba(255, 123, 114, .65); background: rgba(255, 123, 114, .08); color: var(--bad); }
+.slot-input.extra { border-color: var(--line); color: var(--dim); }
 .slot-input.missed { border-color: rgba(255, 209, 102, .55); border-style: dashed; }
 .ca-miss { font-size: 15px; padding: 7px 13px; border-radius: 10px; border: 1px dashed rgba(255, 209, 102, .45); color: var(--warn); }
 
@@ -430,6 +446,34 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .bar-col .b.zero { background: #1b2530; }
 .bar-col .d { font-size: 11px; color: var(--dim); }
 .bar-col .n { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* 添加到主屏幕提示 */
+.install-tip {
+  position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 60;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: 14px;
+  background: rgba(14, 19, 24, .97); border: 1px solid var(--line);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, .55);
+  font-size: 13px; color: var(--muted); line-height: 1.55;
+  backdrop-filter: blur(10px);
+}
+.install-tip .it-text { flex: 1; }
+.install-tip b { color: var(--text); font-weight: 600; }
+
+/* 拼写纠正提示 */
+.spell-hint { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+.spell-hint[hidden] { display: none; }
+.spell-hint .sh-label { color: var(--dim); }
+.spell-hint .sh-word {
+  border: 1px dashed rgba(184, 240, 142, .45); background: rgba(184, 240, 142, .08);
+  color: var(--accent); border-radius: 9px; padding: 5px 12px; font-size: 15px;
+  font-family: var(--serif); font-weight: 600; cursor: pointer; transition: .15s;
+}
+.spell-hint .sh-word:hover { background: rgba(184, 240, 142, .18); }
+
+body.has-install-tip { padding-bottom: 92px; }
+.install-tip .it-x { border: 0; background: transparent; color: var(--dim); font-size: 15px; padding: 6px; cursor: pointer; }
+
 .top-wrong { display: flex; flex-direction: column; gap: 7px; }
 .affix-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
 .affix-row { display: grid; grid-template-columns: 190px 1fr; gap: 14px; align-items: baseline; font-size: 13.5px; }
@@ -590,8 +634,7 @@ compromise
 </div>
 <div id="toast"></div>
 <script>/* ============================================================
-   词锻 WordForge — 输出式背单词
-   1) 混乱输入 → 结构化单词卡（一词多义合并 / 同义自动成组）
+   word — 输出式背单词   1) 混乱输入 → 结构化单词卡（一词多义合并 / 同义自动成组）
    2) 四种动手练习：眼熟冲刺 / 拼写输出 / 一词多义 / 同义联想
    3) 间隔重复（SRS）+ 本地保存
    ============================================================ */
@@ -1352,8 +1395,7 @@ compromise
     return {
       kind: 'sense', item: item, answer: card.en,
       opts: shuffle(correct.concat(pool.slice(0, need))),
-      correctCount: correct.length,
-      slots: new Array(correct.length).fill(null)
+      correctCount: correct.length
     };
   }
 
@@ -1385,8 +1427,7 @@ compromise
     return {
       kind: 'synonym', item: item, cn: item.sense.cn, pos: item.sense.pos || '',
       opts: shuffle(correct.concat(pool.slice(0, need))),
-      correctCount: correct.length,
-      slots: new Array(correct.length).fill(null)
+      correctCount: correct.length
     };
   }
 
@@ -1419,7 +1460,6 @@ compromise
       ask: dir === 'derive' ? '它的名词形式是？' : '它是由哪个词变来的？',
       opts: opts,
       correctCount: 1,
-      slots: [null],
       extra: base + ' → ' + derived + '（' + rule + '）'
     };
   }
@@ -2013,7 +2053,7 @@ compromise
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = '词锻-词库-' + todayKey() + '.json';
+    a.download = 'word-' + todayKey() + '.json';
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -2276,7 +2316,7 @@ compromise
   }
 
   /* ---------- 各题型渲染 ---------- */
-  /* ---------- 题型渲染：普通=选选项，进阶=打字填空 ---------- */
+  /* ---------- 题型渲染：普通=选选项，进阶=打字填空（一个框，要填再加） ---------- */
   function barHtml() {
     return '<div class="actions" id="actions">' +
       '<button class="btn ghost" id="btn-prev"' + (P.cur > 0 ? '' : ' disabled') + '>上一个</button>' +
@@ -2312,23 +2352,26 @@ compromise
 
   function slotsInner(q) {
     const en = (q.kind === 'synonym' || q.kind === 'morph');
-    return q.slots.map((v, i) =>
+    const inputs = q.slots.map((v, i) =>
       '<input class="slot-input' + (en ? ' en' : '') + '" data-slot="' + i + '"' +
-      ' value="' + esc(v || '') + '" placeholder="' + (i + 1) + '"' +
+      ' value="' + esc(v || '') + '" placeholder="' + (en ? 'word' : '意思') + '"' +
       ' autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"' +
-      (q.done ? ' readonly' : '') + '>'
+      (q.locked ? ' readonly' : '') + '>'
     ).join('');
+    const add = q.locked ? '' : '<button class="add-slot" id="add-slot" title="再加一个">＋</button>';
+    return inputs + add;
   }
 
   function questionHtml(q) {
     const en = (q.kind === 'synonym' || q.kind === 'morph');
     let body;
     if (q.level === 'hard') {
-      if (!Array.isArray(q.slots) || q.slots.length !== q.correctCount) q.slots = new Array(q.correctCount).fill('');
-      body = '<div class="slots" id="slots">' + slotsInner(q) + '</div>';
+      if (!Array.isArray(q.slots) || !q.slots.length) q.slots = [''];
+      body = '<div class="slots" id="slots">' + slotsInner(q) + '</div>' +
+        '<div class="spell-hint" id="spell-hint" hidden></div>';
     } else {
       q.picked = q.picked || new Set();
-      body = '<div class="options' + (en ? ' en' : '') + '" id="opts">' + optsInner(q) + '</div>';
+      body = '<div class="options' + (en ? ' en' : '') + '" id="opts"></div>';
     }
     return questionHead(q) + body + barHtml();
   }
@@ -2353,27 +2396,165 @@ compromise
     return -1;
   }
 
+  /** 判一次打字：只比非空的框 */
+  /** 判一次打字：拼写近似但确实是手滑的 → 算对；多余的不扣分 */
+  function gradeTyped(q) {
+    const isEn = (q.kind === 'synonym' || q.kind === 'morph');
+    const bank = q.opts.filter((o) => o.ok).map((o) => o.text);
+    const used = new Set();
+    const fixes = [];
+
+    const results = q.slots.map((raw) => {
+      const v = String(raw || '').trim();
+      if (!v) return { state: 'empty', bankIdx: -1 };
+      const idx = matchAnswer(v, bank, used, isEn);
+      if (idx >= 0) { used.add(idx); return { state: 'ok', bankIdx: idx, fixed: '' }; }
+      // 手滑容错：差一两个字母，且打出来的不是别的真词
+      if (isEn) {
+        const sug = suggestSpelling(v, bank.filter((_, i) => !used.has(i)));
+        if (sug) {
+          const j = bank.indexOf(sug);
+          if (j >= 0 && !used.has(j)) {
+            used.add(j);
+            fixes.push(sug);
+            return { state: 'ok', bankIdx: j, fixed: sug };
+          }
+        }
+      }
+      return { state: 'extra', bankIdx: -1 };
+    });
+
+    const missed = bank.length - used.size;
+    const ok = missed === 0 && used.size > 0;
+    return { bank: bank, results: results, matched: used.size, missed: missed, ok: ok, fixes: fixes };
+  }
+
+  /** Damerau-Levenshtein：允许漏字、多字、错字、相邻换位 */
+  function editDist(a, b) {
+    const m = a.length, n = b.length;
+    if (Math.abs(m - n) > 2) return 9;
+    const d = [];
+    for (let i = 0; i <= m; i++) { d[i] = [i]; }
+    for (let j = 0; j <= n; j++) { d[0][j] = j; }
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        const c = a[i - 1] === b[j - 1] ? 0 : 1;
+        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + c);
+        if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+          d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+        }
+      }
+    }
+    return d[m][n];
+  }
+
+  let knownWords = null;
+  function isKnownWord(w) {
+    if (!knownWords || knownWords.size !== state.cards.length) {
+      knownWords = new Set(state.cards.map((c) => c.id));
+    }
+    return knownWords.has(uid(w));
+  }
+
+  /** 只纠「像手滑」的；打出来本身是别的真词就不纠 */
+  function suggestSpelling(raw, bank) {
+    const t = normEnAnswer(raw);
+    if (t.length < 3) return null;
+    if (/[^a-z' -]/.test(t)) return null;
+    if (bank.some((b) => normEnAnswer(b) === t)) return null;
+    if (isKnownWord(t)) return null;
+    let best = null;
+    let bestD = 9;
+    bank.forEach((b) => {
+      const bb = normEnAnswer(b);
+      if (!bb) return;
+      // 漏拼最多 1 个字母；拼错 / 打反 / 多打，合计最多 2 处
+      const missing = Math.max(0, bb.length - t.length);
+      if (missing > 1) return;
+      const dd = editDist(t, bb);
+      if (dd <= 2 && dd < bestD) { bestD = dd; best = b; }
+    });
+    return best;
+  }
+
+  /** 判完之后：把纠对的词写回框里，并在下面列出「猜你想拼」 */
+  function applyFixes(q) {
+    const g = q.graded;
+    if (!g) return;
+    const inputs = $$('#slots .slot-input');
+    g.results.forEach((r, i) => {
+      if (r.fixed && inputs[i]) {
+        inputs[i].value = r.fixed;
+        q.slots[i] = r.fixed;
+      }
+    });
+    const el = document.getElementById('spell-hint');
+    if (!el) return;
+    if (!g.fixes || !g.fixes.length) { el.hidden = true; el.innerHTML = ''; return; }
+    el.hidden = false;
+    el.innerHTML = g.fixes.map((w) =>
+      '<span class="sh-label">猜你想拼</span><span class="sh-word">' + esc(w) + '</span>'
+    ).join('');
+  }
+
+  function renderSlots(q) {
+    const box = $('#slots');
+    if (box) box.innerHTML = slotsInner(q);
+    const inputs = $$('#slots .slot-input');
+    inputs.forEach((inp, i) => {
+      inp.addEventListener('input', () => {
+        q.slots[i] = inp.value;
+        inp.classList.remove('bad', 'extra');
+        const el = document.getElementById('spell-hint');
+        if (el) { el.hidden = true; el.innerHTML = ''; }
+      });
+      // 点红框：清空重打；绿框不给动
+      inp.addEventListener('focus', () => {
+        if (q.locked || inp.classList.contains('ok')) inp.blur();
+      });
+      inp.addEventListener('pointerdown', () => {
+        if (q.locked || inp.classList.contains('ok')) return;
+        if (inp.value.trim()) {
+          inp.value = '';
+          q.slots[i] = '';
+          inp.classList.remove('bad', 'extra');
+        }
+      });
+      inp.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' || e.isComposing) return;
+        e.preventDefault();
+        submitOrAdvance(q);
+      });
+    });
+  }
+
+  function newSlot(q) {
+    if (q.locked) return;
+    q.slots.push('');
+    renderSlots(q);
+    const inputs = $$('#slots .slot-input');
+    const last = inputs[inputs.length - 1];
+    if (last) { try { last.focus(); } catch (e) {} }
+  }
+
   function bindStage(q) {
     const prev = $('#btn-prev');
     if (prev) prev.onclick = () => goPrev();
 
     if (q.level === 'hard') {
-      const inputs = $$('#slots .slot-input');
-      inputs.forEach((inp, i) => {
-        inp.addEventListener('input', () => { q.slots[i] = inp.value; });
-        inp.addEventListener('keydown', (e) => {
-          if (e.key !== 'Enter' || e.isComposing) return;
-          e.preventDefault();
-          if (P.revealed) { advance(); return; }
-          const empty = inputs.find((x) => !x.value.trim());
-          if (empty && empty !== inp) { empty.focus(); return; }
-          checkQuestion(q);
+      renderSlots(q);
+      const box = $('#slots');
+      if (box) {
+        box.addEventListener('click', (e) => {
+          if (e.target.closest('#add-slot')) { e.preventDefault(); newSlot(q); }
         });
-      });
-      if (inputs[0] && !q.done) setTimeout(() => { try { inputs[0].focus(); } catch (e) {} }, 60);
+      }
+      const inputs = $$('#slots .slot-input');
+      if (inputs[0] && !q.locked) setTimeout(() => { try { inputs[0].focus(); } catch (e) {} }, 60);
     } else {
       const opts = $('#opts');
       if (opts) {
+        opts.innerHTML = optsInner(q);
         opts.addEventListener('click', (e) => {
           const b = e.target.closest('.option');
           if (!b || P.revealed) return;
@@ -2386,7 +2567,13 @@ compromise
       }
     }
     const ck = $('#btn-check');
-    if (ck) ck.onclick = () => checkQuestion(q);
+    if (ck) ck.onclick = () => submitOrAdvance(q);
+  }
+
+  function submitOrAdvance(q) {
+    if (q.level === 'hard' && q.redo) { checkRedo(q); return; }
+    if (q.done) { advance(); return; }
+    checkQuestion(q);
   }
 
   function goPrev() {
@@ -2398,20 +2585,27 @@ compromise
 
   function paintAnswered(q, speakOn) {
     const hard = q.level === 'hard';
-    const isEn = (q.kind === 'synonym' || q.kind === 'morph');
     const isSyn = q.kind === 'synonym';
-    const got = new Set();
+    const card = q.item.card;
+    const g = q.graded || { bank: [], missed: 0, matched: 0, results: [] };
 
     if (hard) {
       const inputs = $$('#slots .slot-input');
       inputs.forEach((inp, i) => {
-        const r = q.graded ? q.graded.results[i] : null;
-        inp.classList.remove('ok', 'bad', 'missed');
+        const r = g.results[i];
+        inp.classList.remove('ok', 'bad', 'extra');
         if (!r) return;
-        if (r.state === 'ok') { inp.classList.add('ok'); got.add(r.bankIdx); }
-        else if (r.state === 'bad') inp.classList.add('bad');
-        else inp.classList.add('missed');
+        if (r.state === 'ok') {
+          inp.classList.add('ok');
+          inp.readOnly = true;
+          inp.tabIndex = -1;
+          if (document.activeElement === inp) inp.blur();
+        }
+        else if (r.state === 'extra' && String(q.slots[i] || '').trim()) inp.classList.add(q.okResult ? 'extra' : 'bad');
+        else if (r.state === 'empty' && !q.okResult) inp.classList.add('bad');
+        if (q.locked) { inp.readOnly = true; inp.tabIndex = -1; }
       });
+      applyFixes(q);
     } else {
       const opts = $('#opts');
       if (opts) {
@@ -2419,7 +2613,7 @@ compromise
           const o = q.opts[i];
           const mark = el.querySelector('.mark');
           el.classList.remove('picked');
-          if (o.ok && q.picked.has(i)) { el.classList.add('ok'); got.add(i); if (mark) mark.textContent = '✓'; }
+          if (o.ok && q.picked.has(i)) { el.classList.add('ok'); if (mark) mark.textContent = '✓'; }
           else if (o.ok && !q.picked.has(i)) { el.classList.add('missed'); if (mark) mark.textContent = '漏'; }
           else if (!o.ok && q.picked.has(i)) { el.classList.add('bad'); if (mark) mark.textContent = '✗'; }
           else if (mark) mark.textContent = '';
@@ -2427,27 +2621,29 @@ compromise
       }
     }
 
-    let missed = 0;
-    q.opts.forEach((o, i) => { if (o.ok && !got.has(i)) missed += 1; });
     const vd = $('#verdict');
     if (vd) {
       vd.className = 'vline ' + (q.okResult ? 'good' : 'bad');
-      vd.textContent = q.okResult
-        ? '✓ 全对' + ((q.streakAt || 0) > 1 ? ' · 连击 ×' + q.streakAt : '')
-        : '✗ ' + got.size + ' 个对' + (missed ? ' · 漏 ' + missed : '');
+      vd.textContent = (q.okResult ? '✓ ' : '✗ ') + g.matched + ' / ' + g.bank.length;
     }
 
     const btn = $('#btn-check');
     if (btn) {
       btn.disabled = false;
       btn.className = 'btn primary';
-      btn.innerHTML = '下一个 <span class="kb">Enter</span>';
-      btn.onclick = () => advance();
+      if (q.redo) {
+        btn.innerHTML = '再打一遍 <span class="kb">Enter</span>';
+        btn.onclick = () => checkRedo(q);
+      } else {
+        btn.innerHTML = '下一个 <span class="kb">Enter</span>';
+        btn.onclick = () => advance();
+      }
     }
 
-    const card = q.item.card;
     const actions = $('#actions');
     if (actions) {
+      // 先清掉上一次画的（重打时会再画一次）
+      document.querySelectorAll('.count-answer, .answer-extra').forEach((n) => n.remove());
       const extra = [];
       if (q.kind === 'morph' && q.extra) extra.push(esc(q.extra));
       if (card.note && q.kind !== 'morph') extra.push('📎 ' + esc(card.note));
@@ -2457,16 +2653,15 @@ compromise
         box.innerHTML = extra.map((x) => '<div>' + x + '</div>').join('');
         actions.insertAdjacentElement('afterend', box);
       }
-      // 进阶模式：下面把完整答案摊开
       if (hard) {
-        const bank = q.opts.filter((o) => o.ok).map((o) => o.text);
         const box = document.createElement('div');
         box.className = 'count-answer';
         const title = isSyn
-          ? '能表达「' + esc(q.cn) + '」的有 <b>' + bank.length + '</b> 个词'
-          : '「' + esc(card.en) + '」有 <b>' + bank.length + '</b> 个意思';
+          ? '能表达「' + esc(q.cn) + '」的有 <b>' + g.bank.length + '</b> 个词'
+          : '「' + esc(card.en) + '」有 <b>' + g.bank.length + '</b> 个意思';
         box.innerHTML = '<div class="ca-title">' + title + '</div>' +
-          '<div class="ca-list">' + bank.map((t) => '<span class="sense-tag">' + esc(t) + '</span>').join('') + '</div>';
+          '<div class="ca-list">' + g.bank.map((t) => '<span class="sense-tag">' + esc(t) + '</span>').join('') + '</div>' +
+          (q.redo ? '<div class="ca-note">照着打对才能继续</div>' : '');
         actions.insertAdjacentElement('afterend', box);
       }
     }
@@ -2477,43 +2672,53 @@ compromise
   /* ---------- 判题 ---------- */
   function checkQuestion(q) {
     if (P.revealed) return;
-    let ok = false;
-    let got = 0;
 
     if (q.level === 'hard') {
-      const isEn = (q.kind === 'synonym' || q.kind === 'morph');
-      const bank = q.opts.filter((o) => o.ok).map((o) => o.text);
-      const used = new Set();
-      const results = (q.slots || []).map((raw) => {
-        const idx = matchAnswer(raw, bank, used, isEn);
-        if (idx >= 0) { used.add(idx); return { state: 'ok', bankIdx: idx }; }
-        return { state: String(raw || '').trim() ? 'bad' : 'empty', bankIdx: -1 };
-      });
-      got = used.size;
-      ok = results.every((r) => r.state === 'ok') && got === bank.length;
-      q.graded = { bank: bank, results: results };
-    } else {
-      let all = true;
-      q.opts.forEach((o, i) => {
-        const hit = !!(q.picked && q.picked.has(i));
-        if (!!o.ok !== hit) all = false;
-        if (o.ok && hit) got += 1;
-      });
-      ok = all;
+      const g = gradeTyped(q);
+      q.graded = g;
+      q.done = true;
+      q.okResult = g.ok;
+      P.revealed = true;
+      recordAnswer(q.item, g.ok, q.kind === 'sense' || q.kind === 'single');
+      P.answered += 1;
+      if (g.ok) {
+        P.correct += 1; P.streak += 1; P.best = Math.max(P.best, P.streak);
+      } else {
+        P.wrong += 1; P.streak = 0; P.wrongItems.push(q.item);
+        q.redo = true;
+      }
+      q.streakAt = P.streak;
+      updateProgress();
+      saveState();
+      paintAnswered(q, true);
+      if (q.redo) {
+        const first = $('#slots .slot-input');
+        if (first) setTimeout(() => { try { first.focus(); } catch (e) {} }, 60);
+      }
+      return;
     }
 
+    let all = true;
+    let got = 0;
+    q.opts.forEach((o, i) => {
+      const hit = !!(q.picked && q.picked.has(i));
+      if (!!o.ok !== hit) all = false;
+      if (o.ok && hit) got += 1;
+    });
+    const bank = q.opts.filter((o) => o.ok).length;
+    q.graded = { bank: q.opts.filter((o) => o.ok).map((o) => o.text), matched: got, missed: bank - got, results: [] };
     q.done = true;
-    q.okResult = ok;
+    q.okResult = all;
     P.revealed = true;
-    recordAnswer(q.item, ok, q.kind === 'sense' || q.kind === 'single');
+    recordAnswer(q.item, all, q.kind === 'sense' || q.kind === 'single');
     P.answered += 1;
-    if (ok) {
+    if (all) {
       P.correct += 1; P.streak += 1; P.best = Math.max(P.best, P.streak);
     } else {
       P.wrong += 1; P.streak = 0; P.wrongItems.push(q.item);
       if (!q.retry) {
         P.qs.push(Object.assign({}, q, {
-          retry: true, slots: null, picked: null, graded: null, done: false, okResult: null,
+          retry: true, slots: null, picked: null, graded: null, done: false, okResult: null, locked: false,
           opts: q.opts.map((o) => Object.assign({}, o))
         }));
       }
@@ -2523,6 +2728,28 @@ compromise
     saveState();
     paintAnswered(q, true);
   }
+
+  /** 错题照着再打：必须全对才放行，次数不限 */
+  function checkRedo(q) {
+    const g = gradeTyped(q);
+    q.graded = g;
+    if (g.ok) {
+      q.redo = false;
+      q.locked = true;
+      q.okResult = true;
+      q.slots = g.results.map((r, i) => (r.state === 'ok' ? (q.slots[i] || '') : q.slots[i] || ''));
+      paintAnswered(q, false);
+      const btn = $('#btn-check');
+      if (btn) { btn.innerHTML = '下一个 <span class="kb">Enter</span>'; btn.onclick = () => advance(); }
+      const panel = document.querySelector('.count-answer .ca-note');
+      if (panel) panel.remove();
+      return;
+    }
+    paintAnswered(q, false);
+    const box = $('#slots');
+    if (box) { box.classList.add('shake'); setTimeout(() => box.classList.remove('shake'), 320); }
+  }
+
 
   /* ---------- 键盘 ---------- */
   function onKeydown(e) {
@@ -2637,6 +2864,42 @@ compromise
   }
 
   /* ============ 11. 启动 ============ */
+  /** PWA：注册 service worker（只在线上跑） */
+  function registerSW() {
+    if (!('serviceWorker' in navigator)) return;
+    if (!/^https?:$/.test(location.protocol)) return;
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+
+  /** 手机上提示「添加到主屏幕」 */
+  function maybeInstallTip() {
+    try {
+      if (localStorage.getItem('word.installTip') === '0') return;
+      const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+      if (standalone) return;
+      const ua = navigator.userAgent;
+      if (!/Android|iPhone|iPad|iPod|Mobile/i.test(ua)) return;
+      const isIOS = /iPad|iPhone|iPod/.test(ua);
+      const el = document.createElement('div');
+      el.className = 'install-tip';
+      el.innerHTML =
+        '<div class="it-text">' +
+        (isIOS
+          ? '点下面「分享」→「添加到主屏幕」，以后从图标进，进度就不会跑丢'
+          : '点右上角 ⋮ →「安装应用」，以后从图标进，进度就不会跑丢') +
+        '</div><button class="it-x" aria-label="关闭">✕</button>';
+      document.body.appendChild(el);
+      document.body.classList.add('has-install-tip');
+      el.querySelector('.it-x').onclick = () => {
+        localStorage.setItem('word.installTip', '0');
+        el.remove();
+        document.body.classList.remove('has-install-tip');
+      };
+    } catch (e) {}
+  }
+
   function boot() {
     state = loadState();
     if (state._justSeeded) { delete state._justSeeded; saveState(); }
@@ -2666,6 +2929,8 @@ compromise
 
     renderImportMeta();
     switchTab(state.cards.length ? 'practice' : 'import');
+    registerSW();
+    maybeInstallTip();
   }
 
   /* ============ 导出（供 node 测试） ============ */
@@ -2680,6 +2945,7 @@ compromise
     buildGroups: buildGroups,
     itemKey: itemKey,
     FAMILIES: FAMILIES,
+    suggestSpelling: suggestSpelling,
     AFFIXES: AFFIXES,
     _internals: { shuffle: shuffle, scanPairs: scanPairs, textToSenses: textToSenses }
   };
