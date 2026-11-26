@@ -305,6 +305,7 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .slot-input.ok { border-color: rgba(184, 240, 142, .7); background: rgba(184, 240, 142, .10); color: var(--accent); pointer-events: none; cursor: default; }
 .slot-input.bad { border-color: rgba(255, 123, 114, .65); background: rgba(255, 123, 114, .08); color: var(--bad); }
 .slot-input.extra { border-color: var(--line); color: var(--dim); }
+.slot-input.ok:focus { box-shadow: none; }
 .slot-input.missed { border-color: rgba(255, 209, 102, .55); border-style: dashed; }
 .ca-miss { font-size: 15px; padding: 7px 13px; border-radius: 10px; border: 1px dashed rgba(255, 209, 102, .45); color: var(--warn); }
 
@@ -543,8 +544,8 @@ body.has-install-tip { padding-bottom: 92px; }
   <header class="topbar">
     <nav class="tabs" id="tabs">
       <button class="tab" data-tab="practice">练习</button>
-      <button class="tab" data-tab="library">词库</button>
       <button class="tab" data-tab="stats">统计</button>
+      <button class="tab" data-tab="library">词库</button>
       <button class="tab" data-tab="import">导入</button>
     </nav>
   </header>
@@ -2539,20 +2540,36 @@ compromise
         }
       });
       inp.addEventListener('keydown', (e) => {
-        if (e.key !== 'Enter' || e.isComposing) return;
-        e.preventDefault();
-        if (q.done) {
-          if (q.redo) {
-            // 写错了：Enter 回到第一个错的框
-            const bad = $('#slots .slot-input').filter((x) => x.classList.contains('bad'));
-            const first = bad[0] || $('#slots .slot-input')[0];
-            if (first) {
-              first.focus();
-              first.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        // 退格：空框时回到上一个框（末尾多余的空框直接删掉）
+        if (e.key === 'Backspace' && !inp.value && !e.isComposing && !q.locked) {
+          const all = $$('#slots .slot-input');
+          const bi = all.indexOf(inp);
+          if (bi > 0) {
+            e.preventDefault();
+            if (!q.done && bi === all.length - 1 && all.length > 1) {
+              q.slots.pop();
+              renderSlots(q);
+              const left = $$('#slots .slot-input');
+              const prev = left[left.length - 1];
+              if (prev) {
+                prev.focus({ preventScroll: true });
+                try { prev.setSelectionRange(prev.value.length, prev.value.length); } catch (err) {}
+              }
+            } else {
+              const prev = all[bi - 1];
+              if (prev) {
+                prev.focus({ preventScroll: true });
+                try { prev.setSelectionRange(prev.value.length, prev.value.length); } catch (err) {}
+              }
             }
             return;
           }
-          submitOrAdvance(q);   // 全对：Enter = 下一题
+        }
+        if (e.key !== 'Enter' || e.isComposing) return;
+        e.preventDefault();
+        if (q.done) {
+          if (q.redo) { enterRedo(q); return; }   // 判错：只校验当前框，对了跳下一个
+          submitOrAdvance(q);                     // 全对：Enter = 下一题
           return;
         }
         // 还在答：框数没到答案数 → 再加一个；到数了 → 提交
@@ -2584,8 +2601,8 @@ compromise
           if (e.target.closest('#add-slot')) { e.preventDefault(); newSlot(q); }
         });
       }
-      const inputs = $('#slots .slot-input');
-      if (inputs[0] && !q.locked) setTimeout(() => { try { inputs[0].focus(); } catch (e) {} }, 60);
+      const inputs = $$('#slots .slot-input');
+      if (inputs[0] && !q.locked) { try { inputs[0].focus({ preventScroll: true }); } catch (e) {} }
     } else {
       const opts = $('#opts');
       if (opts) {
@@ -2623,6 +2640,8 @@ compromise
     const isSyn = q.kind === 'synonym';
     const card = q.item.card;
     const g = q.graded || { bank: [], missed: 0, matched: 0, results: [] };
+    const matchedNow = new Set();
+    (g.results || []).forEach((r) => { if (r.state === 'ok' && r.bankIdx >= 0) matchedNow.add(r.bankIdx); });
 
     if (hard) {
       const inputs = $$('#slots .slot-input');
@@ -2634,12 +2653,26 @@ compromise
           inp.classList.add('ok');
           inp.readOnly = true;
           inp.tabIndex = -1;
-          if (document.activeElement === inp) inp.blur();
         }
-        else if (r.state === 'extra' && String(q.slots[i] || '').trim()) inp.classList.add(q.okResult ? 'extra' : 'bad');
+        else if (r.state === 'extra') inp.classList.add(q.okResult ? 'extra' : 'bad');
+        else if (r.state === 'bad' && !q.okResult) inp.classList.add('bad');
         else if (r.state === 'empty' && !q.okResult) inp.classList.add('bad');
         if (q.locked) { inp.readOnly = true; inp.tabIndex = -1; }
       });
+      // 判错：把缺的答案当灰色提示放进红框，照着打一遍
+      if (q.redo && !q.okResult) {
+        const missed = [];
+        g.bank.forEach((t, i) => { if (!matchedNow.has(i)) missed.push(t); });
+        let mk = 0;
+        inputs.forEach((inp, i) => {
+          const rr = g.results[i];
+          if (!rr || rr.state !== 'ok') {
+            if (missed[mk] !== undefined) { inp.placeholder = missed[mk]; mk += 1; }
+          } else {
+            inp.placeholder = '';
+          }
+        });
+      }
       applyFixes(q);
     } else {
       const opts = $('#opts');
@@ -2688,16 +2721,7 @@ compromise
         box.innerHTML = extra.map((x) => '<div>' + x + '</div>').join('');
         actions.insertAdjacentElement('afterend', box);
       }
-      if (hard) {
-        const matched = new Set();
-        (g.results || []).forEach((r) => { if (r.state === 'ok' && r.bankIdx >= 0) matched.add(r.bankIdx); });
-        const box = document.createElement('div');
-        box.className = 'count-answer';
-        box.innerHTML = '<div class="ca-list">' + g.bank.map((t, i) =>
-          '<span class="sense-tag ' + (matched.has(i) ? 'ok' : 'bad') + '">' + esc(t) + '</span>'
-        ).join('') + '</div>';
-        actions.insertAdjacentElement('afterend', box);
-      }
+
     }
     P.nextReadyAt = now() + 260;
     if (speakOn && !isSyn && q.answer) speak(q.answer);
@@ -2720,14 +2744,36 @@ compromise
       } else {
         P.wrong += 1; P.streak = 0; P.wrongItems.push(q.item);
         q.redo = true;
+        // ① 框数补齐到答案数 ② 没对上的清空（答案会作为灰色提示填进去）
+        while (q.slots.length < q.correctCount) {
+          q.slots.push('');
+          g.results.push({ state: 'empty', bankIdx: -1 });
+        }
+        g.results.forEach((rr, i) => {
+          if (!rr || rr.state !== 'ok') q.slots[i] = '';
+        });
+        for (let i = g.results.length; i < q.slots.length; i++) q.slots[i] = '';
+        renderSlots(q);
+        $$('#slots .slot-input').forEach((inp, i) => {
+          const rr = g.results[i];
+          if (rr && rr.state === 'ok') return;
+          inp.value = '';
+          inp.classList.remove('ok');
+          inp.classList.add('bad');
+        });
       }
       q.streakAt = P.streak;
       updateProgress();
       saveState();
       paintAnswered(q, true);
       if (q.redo) {
-        const first = $('#slots .slot-input');
-        if (first) setTimeout(() => { try { first.focus(); } catch (e) {} }, 60);
+        // 直接落在第一个没打对的框上（同步聚焦，键盘不收）
+        const bad = $$('#slots .slot-input').filter((x) => !x.classList.contains('ok'));
+        const first = bad[0];
+        if (first) {
+          try { first.focus({ preventScroll: true }); } catch (e) {}
+          try { first.setSelectionRange(first.value.length, first.value.length); } catch (e) {}
+        }
       }
       return;
     }
@@ -2764,6 +2810,37 @@ compromise
   }
 
   /** 错题照着再打：必须全对才放行，次数不限 */
+
+  /** 重打时的 Enter：只看当前框，对了跳下一个，错了清空重打 */
+  function enterRedo(q) {
+    const inputs = $$('#slots .slot-input');
+    let idx = inputs.indexOf(document.activeElement);
+    if (idx < 0) {
+      const fb = inputs.filter((x) => !x.classList.contains('ok'))[0] || inputs[0];
+      if (fb) fb.focus();
+      return;
+    }
+    const g = gradeTyped(q);
+    q.graded = g;
+    const r = g.results[idx];
+    if (r && r.state === 'ok') {
+      paintAnswered(q, false);
+      if (g.ok) { checkRedo(q); return; }          // 全对了 → 过关
+      const nxt = $$('#slots .slot-input').filter((x) => !x.classList.contains('ok'))[0];
+      if (nxt) {
+        nxt.focus({ preventScroll: true });
+        try { nxt.setSelectionRange(nxt.value.length, nxt.value.length); } catch (e) {}
+      }
+      return;
+    }
+    // 没对：清空当前框，留在原地重打
+    const el = inputs[idx];
+    el.value = '';
+    q.slots[idx] = '';
+    el.classList.add('bad');
+    try { el.focus(); } catch (e) {}
+  }
+
   function checkRedo(q) {
     const g = gradeTyped(q);
     q.graded = g;
@@ -2782,6 +2859,13 @@ compromise
     paintAnswered(q, false);
     const box = $('#slots');
     if (box) { box.classList.add('shake'); setTimeout(() => box.classList.remove('shake'), 320); }
+    const bad = $$('#slots .slot-input').filter((x) => !x.classList.contains('ok'));
+    const first = bad[0];
+    if (first) {
+      first.focus();
+      first.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      if (first.setSelectionRange) { try { first.setSelectionRange(first.value.length, first.value.length); } catch (e) {} }
+    }
   }
 
 
@@ -2835,13 +2919,6 @@ compromise
 
     $('#stats-body').innerHTML =
       '<div class="panel">' +
-      '<div class="hero-row">' +
-      '<div class="stat"><b>' + total + '</b><span>单词</span></div>' +
-      '<div class="stat"><b>' + senses + '</b><span>释义</span></div>' +
-      '<div class="stat hi"><b>' + (senses ? Math.round((mastered * 100) / senses) : 0) + '%</b><span>掌握度</span></div>' +
-      '<div class="stat ' + (due ? 'warn' : '') + '"><b>' + due + '</b><span>待复习</span></div>' +
-      '</div>' +
-      '<div class="hr"></div>' +
       '<div class="row gap" style="font-size:13px;color:var(--muted)">' +
       '<span>今天练了 <b style="color:var(--text)">' + (today.seen || 0) + '</b> 次</span>' +
       '<span>今天时长 <b style="color:var(--text)">' + fmtDur(today.time) + '</b></span>' +
@@ -2853,18 +2930,18 @@ compromise
       '</div>' +
 
       '<div class="panel">' +
-      '<div class="panel-head"><h2>最近 7 天 · 答题次数</h2></div>' +
+      '<div class="panel-head"><h2>最近 7 天 · 学习时长</h2></div>' +
       '<div class="bars">' +
-      days.map((d) => '<div class="bar-col"><span class="n">' + d.n + '</span>' +
-        '<div class="b' + (d.n ? '' : ' zero') + '" style="height:' + Math.round((d.n / maxN) * 76) + '%"></div>' +
+      mins.map((d) => '<div class="bar-col"><span class="n">' + d.n + '</span>' +
+        '<div class="b' + (d.n ? '' : ' zero') + '" style="height:' + Math.round((d.n / maxM) * 76) + '%"></div>' +
         '<span class="d">' + d.label + '</span></div>').join('') +
       '</div></div>' +
 
       '<div class="panel">' +
-      '<div class="panel-head"><h2>最近 7 天 · 学习时长（分钟）</h2></div>' +
+      '<div class="panel-head"><h2>最近 7 天 · 答题次数</h2></div>' +
       '<div class="bars">' +
-      mins.map((d) => '<div class="bar-col"><span class="n">' + d.n + '</span>' +
-        '<div class="b' + (d.n ? '' : ' zero') + '" style="height:' + Math.round((d.n / maxM) * 76) + '%"></div>' +
+      days.map((d) => '<div class="bar-col"><span class="n">' + d.n + '</span>' +
+        '<div class="b' + (d.n ? '' : ' zero') + '" style="height:' + Math.round((d.n / maxN) * 76) + '%"></div>' +
         '<span class="d">' + d.label + '</span></div>').join('') +
       '</div></div>' +
 
