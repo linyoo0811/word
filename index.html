@@ -2653,13 +2653,15 @@ compromise
         if (!r) return;
         if (r.state === 'ok') {
           inp.classList.add('ok');
-          inp.readOnly = true;
-          inp.tabIndex = -1;
+          // 正在打的那个框先别设 readonly，否则手机键盘会立刻收起
+          if (document.activeElement !== inp) { inp.readOnly = true; inp.tabIndex = -1; }
         }
         else if (r.state === 'extra') inp.classList.add(q.okResult ? 'extra' : 'bad');
         else if (r.state === 'bad' && !q.okResult) inp.classList.add('bad');
         else if (r.state === 'empty' && !q.okResult) inp.classList.add('bad');
-        if (q.locked) { inp.readOnly = true; inp.tabIndex = -1; }
+        if (q.locked) {
+          if (document.activeElement !== inp) { inp.readOnly = true; inp.tabIndex = -1; }
+        }
       });
       // 判错：把缺的答案当灰色提示放进红框，照着打一遍
       if (q.redo && !q.okResult) {
@@ -2828,11 +2830,7 @@ compromise
     if (r && r.state === 'ok') {
       paintAnswered(q, false);
       if (g.ok) {
-        checkRedo(q);                        // 标成过关（停在 ✓ 状态）
-        const btnNext = $('#btn-check');
-        if (btnNext) {
-          btnNext.focus({ preventScroll: true });   // 焦点交给「下一个」，再按 Enter 才走
-        }
+        checkRedo(q);                        // 标成过关（停在 ✓ 状态，键盘不收）
         return;
       }
       const nxt = $$('#slots .slot-input').filter((x) => !x.classList.contains('ok'))[0];
