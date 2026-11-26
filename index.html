@@ -2373,7 +2373,7 @@ compromise
       ' name="wf-' + i + '-' + Math.random().toString(36).slice(2, 7) + '"' +
       ' value="' + esc(v || '') + '"' +
       ' autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"' +
-      ' inputmode="text" enterkeyhint="done" data-form-type="other" data-lpignore="true"' +
+      ' inputmode="text" enterkeyhint="next" data-form-type="other" data-lpignore="true"' +
       (q.locked ? ' readonly' : '') + '>'
     ).join('');
     const add = q.locked ? '' : '<button class="add-slot" id="add-slot" title="加一个">＋</button>';
@@ -2541,8 +2541,21 @@ compromise
       inp.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter' || e.isComposing) return;
         e.preventDefault();
-        if (q.done) { submitOrAdvance(q); return; }    // 已判完：Enter = 下一题
-        // 框数还没到答案数 → 再加一个；到数了 → 直接提交
+        if (q.done) {
+          if (q.redo) {
+            // 写错了：Enter 回到第一个错的框
+            const bad = $('#slots .slot-input').filter((x) => x.classList.contains('bad'));
+            const first = bad[0] || $('#slots .slot-input')[0];
+            if (first) {
+              first.focus();
+              first.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }
+            return;
+          }
+          submitOrAdvance(q);   // 全对：Enter = 下一题
+          return;
+        }
+        // 还在答：框数没到答案数 → 再加一个；到数了 → 提交
         if (q.slots.length >= q.correctCount) { checkQuestion(q); return; }
         newSlot(q);
       });
