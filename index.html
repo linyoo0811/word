@@ -209,6 +209,8 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .lib-word { font-family: var(--serif); font-size: 21px; font-weight: 700; letter-spacing: .01em; }
 .lib-phon { color: var(--dim); font-size: 13px; font-family: var(--mono); }
 .lib-senses { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.sense-tag.ok { border-color: rgba(184, 240, 142, .45); background: rgba(184, 240, 142, .10); color: var(--accent); }
+.sense-tag.bad { border-color: rgba(255, 123, 114, .45); background: rgba(255, 123, 114, .08); color: var(--bad); }
 .sense-tag {
   font-size: 13px; padding: 3px 9px; border-radius: 8px; background: var(--panel-2);
   border: 1px solid var(--line-soft); color: #cdd9e5;
@@ -232,13 +234,14 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .stat.hi b { color: var(--accent); }
 .stat.warn b { color: var(--warn); }
 .mode-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(285px, 1fr)); gap: 12px; margin-bottom: 16px; }
-.mode-grid.two { grid-template-columns: repeat(2, 1fr); }
+.mode-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 560px; }
 .mode-card {
   text-align: left; border: 1px solid var(--line-soft); border-radius: 16px;
   background: linear-gradient(180deg, var(--panel), var(--bg-soft)); padding: 16px;
   transition: .18s; display: flex; flex-direction: column; gap: 4px; position: relative;
 }
-.mode-card:hover { border-color: #33465a; transform: translateY(-2px); }
+.mode-card:hover { border-color: #33465a; }
+.mode-card.slim:hover { transform: none; }
 .mode-card.sel { border-color: rgba(184, 240, 142, .55); background: linear-gradient(180deg, rgba(184, 240, 142, .1), var(--bg-soft)); box-shadow: 0 0 0 1px rgba(184, 240, 142, .25) inset; }
 .mode-card.disabled { opacity: .45; pointer-events: none; }
 .mode-card .mi { font-size: 20px; }
@@ -247,9 +250,9 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .mode-card .mtag { font-size: 11px; padding: 1px 7px; border-radius: 6px; background: rgba(255, 255, 255, .06); color: var(--dim); font-weight: 600; }
 
 /* 精简模式卡 */
-.mode-card.slim { flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px 22px; min-height: 0; }
-.mode-card.slim .mt { font-size: 24px; font-weight: 700; letter-spacing: .02em; }
-.mode-card.slim .md.count { font-size: 13px; color: var(--dim); margin: 0; }
+.mode-card.slim { flex-direction: column; align-items: flex-start; gap: 5px; padding: 14px 16px; min-height: 0; }
+.mode-card.slim .mt { font-size: 17px; font-weight: 650; letter-spacing: .01em; }
+.mode-card.slim .md.count { font-size: 12.5px; color: var(--dim); margin: 0; }
 .mode-card.slim .mi { display: none; }
 
 .start-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -642,7 +645,7 @@ compromise
 <div id="toast"></div>
 <script>/* ============================================================
    word — 输出式背单词   1) 混乱输入 → 结构化单词卡（一词多义合并 / 同义自动成组）
-   2) 四种动手练习：眼熟冲刺 / 拼写输出 / 一词多义 / 同义联想
+   2) 练习：一词多义 / 一义多词，各分普通（选项）与进阶（打字）
    3) 间隔重复（SRS）+ 本地保存
    ============================================================ */
 (function (global) {
@@ -1181,6 +1184,28 @@ compromise
     const k = todayKey();
     if (!state.daily[k]) state.daily[k] = { seen: 0, correct: 0, wrong: 0, words: 0 };
     return state.daily[k];
+  }
+
+  /* ---- 学习时长 ---- */
+  function flushTime() {
+    if (!P.startedAt) return;
+    const dt = now() - P.startedAt;
+    P.startedAt = now();
+    if (dt < 3000 || dt > 3 * 3600 * 1000) return;   // 少于 3 秒 / 超过 3 小时的不算
+    state.totalTime = (state.totalTime || 0) + dt;
+    const d = dailyBucket();
+    d.time = (d.time || 0) + dt;
+    saveState();
+  }
+
+  function fmtDur(ms) {
+    const m = Math.floor((ms || 0) / 60000);
+    if (!ms) return '0 分钟';
+    if (m < 1) return '不到 1 分钟';
+    if (m < 60) return m + ' 分钟';
+    const h = Math.floor(m / 60);
+    const r = m % 60;
+    return h + ' 小时' + (r ? ' ' + r + ' 分' : '');
   }
 
   /* ============ 3. 学习项 & 记忆调度 ============ */
@@ -2086,7 +2111,7 @@ compromise
     const today = state.daily[todayKey()] || { seen: 0 };
     const mode = P.mode;
     const level = P.level === 'hard' ? 'hard' : 'normal';
-    P.limit = clamp(P.limit || state.settings.limit || 20, 5, 200);
+    P.limit = (Number(P.limit || state.settings.limit) === 50) ? 50 : 20;
 
     if (!state.cards.length) {
       return '<div class="panel"><div class="empty"><div class="big">🪶</div>' +
@@ -2113,7 +2138,7 @@ compromise
       const n = available[id] || 0;
       const on = m.id === mode ? ' on' : '';
       return '<button class="btn ghost sm mode-pill' + on + (n ? '' : ' disabled') + '" data-mode="' + m.id + '">' +
-        m.icon + ' ' + m.name + '<span class="pill-n">' + (n || 0) + '</span></button>';
+        m.name + '<span class="pill-n">' + (n || 0) + '</span></button>';
     }).join('');
 
     return '<div class="panel">' +
@@ -2192,7 +2217,7 @@ compromise
         return;
       }
       if (e.target.closest('#btn-start')) { startSession(P.mode); return; }
-      if (e.target.closest('#btn-quit')) { P.phase = 'setup'; renderPractice(); return; }
+      if (e.target.closest('#btn-quit')) { flushTime(); P.phase = 'setup'; renderPractice(); return; }
       if (e.target.closest('#btn-again')) { startSession(P.mode); return; }
       if (e.target.closest('#btn-home')) { P.phase = 'setup'; renderPractice(); return; }
       if (e.target.closest('#btn-retry-wrong')) { retryWrong(); return; }
@@ -2203,6 +2228,7 @@ compromise
   }
 
   function startSession(mode, presetItems) {
+    flushTime();
     const qs = buildQuestions(mode, P.limit, presetItems);
     if (!qs.length) { toast('这个模式暂时没有可练的内容', 'err'); return; }
     P.phase = 'run';
@@ -2261,6 +2287,8 @@ compromise
   }
 
   function finishSession() {
+    P.lastMins = Math.max(1, Math.round((now() - P.startedAt) / 60000));
+    flushTime();
     P.phase = 'done';
     renderPractice();
     updateTabBadge();
@@ -2270,7 +2298,7 @@ compromise
   function summaryHtml() {
     const total = P.correct + P.wrong;
     const acc = total ? Math.round((P.correct / total) * 100) : 0;
-    const mins = Math.max(1, Math.round((now() - P.startedAt) / 60000));
+    const mins = P.lastMins || 1;
     const uniq = [];
     const seen = new Set();
     P.wrongItems.forEach((it) => { if (!seen.has(it.key)) { seen.add(it.key); uniq.push(it); } });
@@ -2343,21 +2371,20 @@ compromise
     const inputs = q.slots.map((v, i) =>
       '<input class="slot-input' + (en ? ' en' : '') + '" data-slot="' + i + '"' +
       ' name="wf-' + i + '-' + Math.random().toString(36).slice(2, 7) + '"' +
-      ' value="' + esc(v || '') + '" placeholder="' + (en ? 'word' : '意思') + '"' +
+      ' value="' + esc(v || '') + '"' +
       ' autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"' +
       ' inputmode="text" enterkeyhint="done" data-form-type="other" data-lpignore="true"' +
       (q.locked ? ' readonly' : '') + '>'
     ).join('');
-    return inputs;
+    const add = q.locked ? '' : '<button class="add-slot" id="add-slot" title="加一个">＋</button>';
+    return inputs + add;
   }
 
   function questionHtml(q) {
     const en = (q.kind === 'synonym' || q.kind === 'morph');
     let body;
     if (q.level === 'hard') {
-      if (!Array.isArray(q.slots) || q.slots.length !== q.correctCount) {
-        q.slots = new Array(Math.max(1, q.correctCount)).fill('');
-      }
+      if (!Array.isArray(q.slots) || !q.slots.length) q.slots = [''];
       body = '<div class="slots" id="slots">' + slotsInner(q) + '</div>' +
         '<div class="spell-hint" id="spell-hint" hidden></div>';
     } else {
@@ -2514,7 +2541,10 @@ compromise
       inp.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter' || e.isComposing) return;
         e.preventDefault();
-        submitOrAdvance(q);
+        if (q.done) { submitOrAdvance(q); return; }    // 已判完：Enter = 下一题
+        // 框数还没到答案数 → 再加一个；到数了 → 直接提交
+        if (q.slots.length >= q.correctCount) { checkQuestion(q); return; }
+        newSlot(q);
       });
     });
   }
@@ -2535,7 +2565,13 @@ compromise
     if (q.level === 'hard') {
       renderSlots(q);
 
-      const inputs = $$('#slots .slot-input');
+      const slotBox = $('#slots');
+      if (slotBox) {
+        slotBox.addEventListener('click', (e) => {
+          if (e.target.closest('#add-slot')) { e.preventDefault(); newSlot(q); }
+        });
+      }
+      const inputs = $('#slots .slot-input');
       if (inputs[0] && !q.locked) setTimeout(() => { try { inputs[0].focus(); } catch (e) {} }, 60);
     } else {
       const opts = $('#opts');
@@ -2640,14 +2676,13 @@ compromise
         actions.insertAdjacentElement('afterend', box);
       }
       if (hard) {
+        const matched = new Set();
+        (g.results || []).forEach((r) => { if (r.state === 'ok' && r.bankIdx >= 0) matched.add(r.bankIdx); });
         const box = document.createElement('div');
         box.className = 'count-answer';
-        const title = isSyn
-          ? '能表达「' + esc(q.cn) + '」的有 <b>' + g.bank.length + '</b> 个词'
-          : '「' + esc(card.en) + '」有 <b>' + g.bank.length + '</b> 个意思';
-        box.innerHTML = '<div class="ca-title">' + title + '</div>' +
-          '<div class="ca-list">' + g.bank.map((t) => '<span class="sense-tag">' + esc(t) + '</span>').join('') + '</div>' +
-          (q.redo ? '<div class="ca-note">照着打对才能继续</div>' : '');
+        box.innerHTML = '<div class="ca-list">' + g.bank.map((t, i) =>
+          '<span class="sense-tag ' + (matched.has(i) ? 'ok' : 'bad') + '">' + esc(t) + '</span>'
+        ).join('') + '</div>';
         actions.insertAdjacentElement('afterend', box);
       }
     }
@@ -2746,7 +2781,7 @@ compromise
       if (ck && !ck.disabled) { e.preventDefault(); ck.click(); }
       return;
     }
-    if (e.key === 'Escape') { P.phase = 'setup'; renderPractice(); }
+    if (e.key === 'Escape') { flushTime(); P.phase = 'setup'; renderPractice(); }
   }
 
   /* ============ 10. 统计视图 ============ */
@@ -2759,15 +2794,18 @@ compromise
     const today = state.daily[todayKey()] || { seen: 0, correct: 0, wrong: 0, words: 0 };
     const accToday = (today.correct + today.wrong) ? Math.round((today.correct * 100) / (today.correct + today.wrong)) : 0;
 
-    // 7 天
+    // 7 天：答题次数 + 学习时长
     const days = [];
+    const mins = [];
     for (let i = 6; i >= 0; i--) {
       const t = now() - i * DAY;
       const k = todayKey(t);
       const b = state.daily[k] || { seen: 0 };
       days.push({ k: k, label: k.slice(5), n: b.seen || 0 });
+      mins.push({ k: k, label: k.slice(5), n: Math.round((b.time || 0) / 60000) });
     }
     const maxN = Math.max(1, ...days.map((d) => d.n));
+    const maxM = Math.max(1, ...mins.map((d) => d.n));
 
     // 错词榜
     const wrongCount = new Map();
@@ -2793,6 +2831,8 @@ compromise
       '<div class="hr"></div>' +
       '<div class="row gap" style="font-size:13px;color:var(--muted)">' +
       '<span>今天练了 <b style="color:var(--text)">' + (today.seen || 0) + '</b> 次</span>' +
+      '<span>今天时长 <b style="color:var(--text)">' + fmtDur(today.time) + '</b></span>' +
+      '<span>累计时长 <b style="color:var(--text)">' + fmtDur(state.totalTime) + '</b></span>' +
       '<span>今天正确率 <b style="color:var(--text)">' + accToday + '%</b></span>' +
       '<span>累计正确率 <b style="color:var(--text)">' + accAll + '%</b></span>' +
       '<span>累计答对 <b style="color:var(--good)">' + tr + '</b> / 答错 <b style="color:var(--bad)">' + tw + '</b></span>' +
@@ -2800,7 +2840,7 @@ compromise
       '</div>' +
 
       '<div class="panel">' +
-      '<div class="panel-head"><h2>最近 7 天</h2></div>' +
+      '<div class="panel-head"><h2>最近 7 天 · 答题次数</h2></div>' +
       '<div class="bars">' +
       days.map((d) => '<div class="bar-col"><span class="n">' + d.n + '</span>' +
         '<div class="b' + (d.n ? '' : ' zero') + '" style="height:' + Math.round((d.n / maxN) * 76) + '%"></div>' +
@@ -2808,7 +2848,15 @@ compromise
       '</div></div>' +
 
       '<div class="panel">' +
-      '<div class="panel-head"><h2>错得最多的词</h2><p>这些建议用「拼写输出」多打几遍</p></div>' +
+      '<div class="panel-head"><h2>最近 7 天 · 学习时长（分钟）</h2></div>' +
+      '<div class="bars">' +
+      mins.map((d) => '<div class="bar-col"><span class="n">' + d.n + '</span>' +
+        '<div class="b' + (d.n ? '' : ' zero') + '" style="height:' + Math.round((d.n / maxM) * 76) + '%"></div>' +
+        '<span class="d">' + d.label + '</span></div>').join('') +
+      '</div></div>' +
+
+      '<div class="panel">' +
+      '<div class="panel-head"><h2>错得最多的词</h2><p>这些建议用「进阶」多打几遍</p></div>' +
       (topWrong.length
         ? '<div class="top-wrong">' + topWrong.map(([en, n]) => {
           const c = state.cards.find((x) => x.en === en);
@@ -2908,6 +2956,7 @@ compromise
     bindImport();
     bindLibrary();
     document.addEventListener('keydown', onKeydown);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) flushTime(); });
     document.addEventListener('click', (e) => {
       const b = e.target.closest('[data-say]');
       if (b) { e.preventDefault(); speak(b.dataset.say); }
